@@ -363,6 +363,31 @@ h2::after { transform-origin: left; }
 @media (prefers-reduced-motion: reduce) {
   .coll-b, .coll.open > .coll-b, .coll-b .m, .coll-b li, .chev { transition: none !important; }
 }
+
+/* V5: profiles + lore */
+.pn { cursor: pointer; }
+.pn::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 7px; border-radius: 50%; background: var(--flag); vertical-align: middle; opacity: .85; }
+.pn:hover { color: var(--flag); }
+.sheet-bg { position: fixed; inset: 0; z-index: 55; background: rgba(2,12,9,.6); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); opacity: 0; transition: opacity .4s; }
+.sheet-bg.on { opacity: 1; }
+.psheet { position: fixed; z-index: 60; left: 50%; bottom: 0; width: min(560px, 100%); max-height: 82vh; overflow: auto; transform: translate(-50%, 105%); transition: transform .5s cubic-bezier(.2,.85,.25,1); background: var(--turf-2); border: 1px solid var(--rule); border-bottom: 0; border-radius: 16px 16px 0 0; padding: 22px 22px calc(28px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -20px 50px rgba(0,0,0,.5); }
+.psheet.on { transform: translate(-50%, 0); }
+.psx { position: absolute; top: 10px; right: 12px; width: 40px; height: 40px; font-size: 28px; line-height: 1; color: var(--muted); background: none; border: 0; cursor: pointer; }
+.ps-in { border-top: 5px solid var(--tc, var(--chalk)); margin: -22px -22px 0; padding: 22px; }
+.ps-in .eyebrow { color: var(--tc, var(--muted)); }
+.ps-in h3 { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: clamp(40px, 11vw, 64px); line-height: .95; margin: 6px 0 12px; }
+.ps-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.ps-tags span { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--tc, var(--chalk)); color: var(--tc, var(--chalk)); padding: 4px 9px; border-radius: 2px; }
+.ps-bio { font-size: 18px; line-height: 1.5; margin: 0 0 16px; white-space: pre-line; }
+.ps-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0; border-top: 1px solid var(--rule); padding-top: 14px; }
+.ps-stats dt { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ps-stats dd { margin: 2px 0 0; font-family: var(--display); font-weight: 900; font-size: 32px; line-height: 1; }
+.psheet.on .ps-in > * { animation: rise .6s cubic-bezier(.2,.8,.2,1) both; }
+.psheet.on .ps-in > *:nth-child(2) { animation-delay: .06s; } .psheet.on .ps-in > *:nth-child(3) { animation-delay: .12s; } .psheet.on .ps-in > *:nth-child(4) { animation-delay: .18s; } .psheet.on .ps-in > *:nth-child(5) { animation-delay: .24s; }
+.lore { white-space: pre-line; }
+.lore h3 { color: var(--flag); }
+.js .rv.in .lore { animation: rise .7s calc(var(--i, 0) * .08s + .15s) cubic-bezier(.2,.8,.2,1) both; }
+@media (prefers-reduced-motion: reduce) { .psheet, .sheet-bg { transition: none; } .psheet.on .ps-in > *, .js .rv.in .lore { animation: none; } }
 </style>
 <meta property="og:title" content="Boys Golf Trip 2027: Blue vs Green">
 <meta property="og:site_name" content="Boys Golf Trip 2027">
@@ -496,6 +521,11 @@ h2::after { transform-origin: left; }
         <p style="margin:14px 0 0"><a class="btn ghost" href="#mvp">Full MVP race</a></p>
       </div>
     </section>
+
+    <section class="inner rv" id="loreSec" hidden>
+      <h2>The Lore</h2>
+      <div class="grid2" id="loreList"></div>
+    </section>
   </main>
 </div>
 
@@ -548,6 +578,12 @@ h2::after { transform-origin: left; }
   <p class="mono">Blue vs Green. Bragging rights are permanent.</p>
 </footer>
 
+<div class="sheet-bg" id="pBg" hidden></div>
+<aside class="psheet" id="pSheet" role="dialog" aria-modal="true" aria-label="Player profile" hidden>
+  <button class="psx" id="psX" type="button" aria-label="Close">&times;</button>
+  <div id="psBody"></div>
+</aside>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <canvas class="confetti" id="confetti" aria-hidden="true" hidden></canvas>
 
@@ -555,7 +591,9 @@ h2::after { transform-origin: left; }
   THE ONE PLACE TO ENTER DATA. Everything on the site (teams, matchups, cup bar, MVP race, pairings reveal, calendar file) is derived from this block.
   To edit on a phone: github.com > golf-trip > index.html > pencil icon, change the block below, commit. Open pages update in about a minute.
 
-  players:  name (used everywhere, spell it the same each time), team ("blue" | "green" | null while undecided), captain: true, nick (optional).
+  players:  name (used everywhere, spell it the same each time), team ("blue" | "green" | null while undecided), captain: true, nick (optional),
+            bio (optional text, a profile opens when someone taps the name), tags (optional list of short labels such as ["Sandbagger"]).
+  lore:     optional inside jokes shown in "The Lore" section, each {"title": "...", "text": "..."}. The section hides itself while the list is empty.
   days:     date, skins and ctp = list of winner NAMES for that day (one name per skin won, repeat a name if they win two).
   round:    course, url, start ("HH:MM" 24h local, used for the calendar), note (optional text shown instead of the start time),
             format ("TBD" until decided), state ("upcoming" | "live" | "final"),
@@ -569,6 +607,7 @@ h2::after { transform-origin: left; }
 {
   "updated": null,
   "mvp": {"winner": null, "points": {"win": 1, "halve": 0.5, "skin": 1, "ctp": 1}},
+  "lore": [],
   "players": [
     {"name": "Jeff Giovannone", "team": "blue", "captain": true, "nick": "G"},
     {"name": "Justin Palermo", "team": "green", "captain": true},
@@ -711,6 +750,12 @@ h2::after { transform-origin: left; }
     fill(d.days[1].rounds[0], 2, null, 'upcoming'); d.days[1].rounds[0].revealed = 3;
     d.days[0].skins = ['Demo Blue 3', 'Demo Green 2', 'Demo Blue 3'];
     d.days[0].ctp = ['Demo Green 1', 'Demo Blue 5'];
+    d.players[1].bio = 'Demo bio. Swears the course was set up unfairly. Has never once blamed his own swing.';
+    d.players[1].tags = ['Demo tag', 'Sandbagger'];
+    d.players[10].bio = 'Demo bio. Arrives with the best gear and the worst short game.';
+    d.players[10].tags = ['Gear guy'];
+    d.players[0].bio = 'Demo bio. Captain. Will explain the rules again if you let him.';
+    d.lore = [{ title: 'Demo joke one', text: 'This is where an inside joke goes. Add as many as you like.' }, { title: 'Demo joke two', text: 'Short and sweet works best.' }];
     d.updated = new Date().toISOString();
     return d;
   }
@@ -743,9 +788,14 @@ h2::after { transform-origin: left; }
     if (p && p.nick) { var parts = n.split(' '); return parts[0] + ' “' + p.nick + '” ' + parts.slice(1).join(' '); }
     return n;
   }
+  function nameHtml(n) {
+    var p = M.byName[n];
+    if (p && (p.bio || (p.tags && p.tags.length))) return '<span class="pn" data-p="' + esc(n) + '" role="button" tabindex="0">' + esc(dispName(n)) + '</span>';
+    return esc(dispName(n));
+  }
   function sideHtml(list) {
     var out = '', n = Math.max(2, (list || []).length), i, x;
-    for (i = 0; i < n; i++) { x = (list || [])[i]; out += '<span class="pl' + (x ? '' : ' tbd') + '">' + (x ? esc(dispName(x)) : 'TBD') + '</span>'; }
+    for (i = 0; i < n; i++) { x = (list || [])[i]; out += '<span class="pl' + (x ? '' : ' tbd') + '">' + (x ? nameHtml(x) : 'TBD') + '</span>'; }
     return out;
   }
   function joinNames(list) { return list && list.length ? list.map(function (n) { return esc(dispName(n)); }).join(' / ') : 'TBD'; }
@@ -962,7 +1012,7 @@ h2::after { transform-origin: left; }
     var tm = M.byName[x.name] && M.byName[x.name].team;
     var bits = [];
     if (x.w) bits.push(x.w + ' W'); if (x.h) bits.push(x.h + ' H'); if (x.s) bits.push(x.s + ' skin' + (x.s > 1 ? 's' : '')); if (x.c) bits.push(x.c + ' CTP');
-    return '<div class="rk"><span class="pos">' + x.rank + '</span><div class="who"><b><i class="' + (tm === 'blue' ? 'b' : tm === 'green' ? 'g' : '') + '"></i>' + esc(dispName(x.name)) + (crowned ? '<span class="crown">👑</span>' : '') + '</b>' +
+    return '<div class="rk"><span class="pos">' + x.rank + '</span><div class="who"><b><i class="' + (tm === 'blue' ? 'b' : tm === 'green' ? 'g' : '') + '"></i>' + nameHtml(x.name) + (crowned ? '<span class="crown">👑</span>' : '') + '</b>' +
       '<span class="bk">' + (bits.join(' · ') || 'No points yet') + '</span><div class="bar2"><u style="width:' + (max ? Math.round(x.pts / max * 100) : 0) + '%"></u></div></div><span class="pts">' + fmtPts(x.pts) + '</span></div>';
   }
   function renderMvp() {
@@ -971,7 +1021,7 @@ h2::after { transform-origin: left; }
     $('mvpMini').innerHTML = crowned ? '<p class="label">Trip MVP</p><div class="mvp-name">' + esc(dispName(crowned)) + '</div><p class="blurb">Prize: TBD</p>'
       : any ? list.slice(0, 3).map(function (x) { return rkRow(x, max, false); }).join('') : '<div class="mvp-win"><p class="label">The pick</p><span class="mvp-name">TBD</span></div>';
     $('mvpLabel').textContent = crowned ? 'Trip MVP: ' + dispName(crowned) : any ? 'Running points' : 'The race starts on the first tee';
-    $('mvpList').innerHTML = !list.length ? '<p class="blurb">Players get added soon.</p>' : !any ? '<div class="field">' + list.map(function (x) { return '<span>' + esc(dispName(x.name)) + '</span>'; }).join('') + '</div>' : (any ? list.filter(function (x) { return x.pts > 0; }).slice(0, 10) : list).map(function (x) { return rkRow(x, max, crowned === x.name); }).join('') +
+    $('mvpList').innerHTML = !list.length ? '<p class="blurb">Players get added soon.</p>' : !any ? '<div class="field">' + list.map(function (x) { return '<span>' + nameHtml(x.name) + '</span>'; }).join('') + '</div>' : (any ? list.filter(function (x) { return x.pts > 0; }).slice(0, 10) : list).map(function (x) { return rkRow(x, max, crowned === x.name); }).join('') +
       (any && list.length > 10 ? '<p class="rules">+ ' + (list.length - Math.min(10, list.filter(function (x) { return x.pts > 0; }).length)) + ' more further back</p>' : '');
     var r = t.rule;
     $('mvpRules').textContent = 'Points: match win ' + fmtDec(r.W) + ', halved ' + fmtDec(r.H) + ', each skin ' + fmtDec(r.S) + ', closest to the pin ' + fmtDec(r.C) + '. Prize TBD.';
@@ -1050,7 +1100,7 @@ h2::after { transform-origin: left; }
   function teamBoard(key) {
     var t = CONFIG.teams[key], ps = M.players.filter(function (p) { return p.team === key; }), i, rows = '';
     ps.sort(function (a, b) { return (b.captain ? 1 : 0) - (a.captain ? 1 : 0); });
-    ps.forEach(function (p, k) { rows += li(p.captain ? 'cap' : '', '<span>' + esc(dispName(p.name)) + '</span>' + (p.captain ? '<span class="badge">Captain</span>' : ''), k); });
+    ps.forEach(function (p, k) { rows += li(p.captain ? 'cap' : '', '<span>' + nameHtml(p.name) + '</span>' + (p.captain ? '<span class="badge">Captain</span>' : ''), k); });
     for (i = ps.length; i < CONFIG.teamSize; i++) rows += li('tba', '<span>TBD</span>', i);
     return collCard('t-' + key, t.cls, t.name, ps.length + ' of ' + CONFIG.teamSize + ' set', rows);
   }
@@ -1059,19 +1109,57 @@ h2::after { transform-origin: left; }
     $('rosterNote').textContent = n + ' of ' + CONFIG.totalPlayers + ' players are in.' + (un ? ' Teams get drafted once the field is full.' : '') + ' Tap a card to fold it.';
     M.players.forEach(function (p, k) {
       var tag = p.captain ? '<span class="badge">' + (p.team === 'blue' ? 'Blue' : 'Green') + ' captain</span>' : p.team ? '<span class="badge">' + CONFIG.teams[p.team].name + '</span>' : '<span class="tbdtag">Team TBD</span>';
-      rows += li((p.team ? (p.team === 'blue' ? 'b' : 'g') : '') + (p.captain ? ' cap' : ''), '<span>' + esc(dispName(p.name)) + '</span>' + tag, k);
+      rows += li((p.team ? (p.team === 'blue' ? 'b' : 'g') : '') + (p.captain ? ' cap' : ''), '<span>' + nameHtml(p.name) + '</span>' + tag, k);
     });
     for (i = 0; i < open; i++) rows += li('tba', '<span>Open spot</span>', n + i);
     $('poolBox').innerHTML = collCard('t-pool', 'pool', 'Players in', n + ' of ' + CONFIG.totalPlayers + ' confirmed', rows);
     $('rosterGrid').innerHTML = teamBoard('blue') + teamBoard('green');
   }
 
+  /* ---------- LORE + PROFILES ---------- */
+  function renderLore() {
+    var lore = (DATA.lore || []).filter(function (x) { return x && (x.title || x.text); });
+    $('loreSec').hidden = !lore.length;
+    $('loreList').innerHTML = lore.map(function (x, i) {
+      return '<div class="panel lore" style="--i:' + Math.min(i, 8) + '">' + (x.title ? '<h3>' + esc(x.title) + '</h3>' : '') + (x.text ? '<p>' + esc(x.text) + '</p>' : '') + '</div>';
+    }).join('');
+  }
+  var sheetTimer;
+  function openProfile(name) {
+    var p = M.byName[name]; if (!p) return;
+    var row = mvpTable().list.filter(function (x) { return x.name === name; })[0] || {};
+    var team = p.team ? CONFIG.teams[p.team] : null, any = row.pts > 0 || row.w || row.h || row.s || row.c;
+    var tags = (p.tags || []).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('');
+    $('psBody').innerHTML = '<div class="ps-in ' + (team ? team.cls : '') + '">' +
+      '<p class="eyebrow">' + (p.captain ? (team ? team.name + ' captain' : 'Captain') : team ? team.name : 'Team TBD') + '</p>' +
+      '<h3 id="psName">' + esc(dispName(name)) + '</h3>' + (tags ? '<div class="ps-tags">' + tags + '</div>' : '') +
+      (p.bio ? '<p class="ps-bio">' + esc(p.bio) + '</p>' : '') +
+      (any ? '<dl class="ps-stats"><div><dt>MVP pts</dt><dd>' + fmtPts(row.pts) + '</dd></div><div><dt>Wins</dt><dd>' + (row.w || 0) + '</dd></div><div><dt>Skins</dt><dd>' + (row.s || 0) + '</dd></div><div><dt>CTP</dt><dd>' + (row.c || 0) + '</dd></div></dl>' : '') + '</div>';
+    clearTimeout(sheetTimer);
+    $('pBg').hidden = false; $('pSheet').hidden = false;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { $('pBg').classList.add('on'); $('pSheet').classList.add('on'); }); });
+    $('psX').focus();
+  }
+  function closeProfile() {
+    $('pBg').classList.remove('on'); $('pSheet').classList.remove('on');
+    sheetTimer = setTimeout(function () { $('pBg').hidden = true; $('pSheet').hidden = true; }, 450);
+  }
+  document.addEventListener('click', function (e) {
+    var n = e.target.closest && e.target.closest('[data-p]');
+    if (n) { openProfile(n.getAttribute('data-p')); return; }
+    if (e.target.id === 'pBg' || e.target.id === 'psX') closeProfile();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeProfile();
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('data-p')) { e.preventDefault(); openProfile(e.target.getAttribute('data-p')); }
+  });
+
   /* ---------- RENDER ALL ---------- */
   function render() {
     M = model();
     document.body.classList.toggle('has-live', M.rounds.some(function (r) { return r.state === 'live'; }));
     updateTug(points(M.rounds));
-    renderSheet(); renderLive(); renderMvp(); renderPairings(); renderTeams();
+    renderSheet(); renderLive(); renderMvp(); renderPairings(); renderTeams(); renderLore();
     observe();
   }
 
