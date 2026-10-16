@@ -154,6 +154,10 @@ details.mu summary span { margin-left: auto; color: var(--muted); }
 .team ul { list-style: none; margin: 0; padding: 0; }
 .team li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--rule); min-width: 0; }
 .team li.cap span:first-child { font-weight: 600; font-size: 17px; overflow-wrap: anywhere; }
+.pool { --tc: var(--chalk); border-top-color: var(--flag); }
+.pool ul { columns: 1; }
+@media (min-width: 700px) { .pool ul { columns: 2; column-gap: 28px; } .pool li { break-inside: avoid; } }
+.tbdtag { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
 .badge { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--tc); color: var(--tc); padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
 .team li.tba { color: var(--muted); border-top-style: dashed; font-family: var(--mono); font-size: 13px; letter-spacing: .08em; }
 
@@ -375,7 +379,8 @@ h1 .b, h1 .g { display: inline-block; text-shadow: 0 0 60px color-mix(in srgb, c
 <main id="viewRosters" hidden>
   <section class="inner rv">
     <h2>Rosters</h2>
-    <p class="cup-note">Both captains are set. Team members get added as the rosters fill.</p>
+    <p class="cup-note">Both captains are set and 14 of 20 players are in. Teams get drafted once the field is full.</p>
+    <div id="poolBox" style="margin-bottom:18px"></div>
     <div class="grid2" id="rosterGrid"></div>
     <p style="margin-top:22px"><a class="btn ghost" href="#trip">Back to the trip</a></p>
   </section>
@@ -422,6 +427,10 @@ h1 .b, h1 .g { display: inline-block; text-shadow: 0 0 60px color-mix(in srgb, c
     dayOne: new Date('2027-06-15T00:00:00-04:00'),
     startedWaiting: new Date('2026-10-16T00:00:00-05:00'),
     teamSize: 10,
+    totalPlayers: 20,
+    /* Confirmed players. Team assignments are not set yet; move names into teams.blue.players / teams.green.players once drafted. */
+    pool: ['Jeff Giovannone', 'Justin Palermo', 'Matt Palermo', 'Sam Baldwin', 'Jon Shub', 'Mario DiPasquale', 'Austin Nonte', 'Jared Welch', 'Desi DesBouillons', 'Art Alzamora', 'Justin Coamey', 'Dane Doucette', 'Brian Dombal', 'Jack Russell'],
+    captainsInPool: { 'Jeff Giovannone': 'Blue', 'Justin Palermo': 'Green' },
     shareUrl: 'https://youngdesi2.github.io/golf-trip/',
     teams: {
       blue:  { name: 'Team Blue',  cls: 'b', captain: 'Jeffrey “G” Giovannone', players: [] },
@@ -649,6 +658,15 @@ h1 .b, h1 .g { display: inline-block; text-shadow: 0 0 60px color-mix(in srgb, c
     return '<div class="team ' + t.cls + ' rv"><header><h3>' + t.name + '</h3><span>' + (1 + t.players.length) +
       ' of ' + CONFIG.teamSize + ' set</span></header><ul>' + rows + '</ul></div>';
   }
+  (function () {
+    var open = CONFIG.totalPlayers - CONFIG.pool.length;
+    var rows = CONFIG.pool.map(function (n) {
+      var c = CONFIG.captainsInPool[n];
+      return '<li' + (c ? ' class="cap ' + (c === 'Blue' ? 'b' : 'g') + '"' : '') + '><span>' + esc(n) + '</span>' + (c ? '<span class="badge">' + c + ' captain</span>' : '<span class="tbdtag">Team TBD</span>') + '</li>';
+    }).join('');
+    for (var i = 0; i < open; i++) rows += '<li class="tba"><span>Open spot</span></li>';
+    $('poolBox').innerHTML = '<div class="team pool rv"><header><h3>Players in</h3><span>' + CONFIG.pool.length + ' of ' + CONFIG.totalPlayers + ' confirmed</span></header><ul>' + rows + '</ul></div>';
+  })();
   $('rosterGrid').innerHTML = teamHtml(CONFIG.teams.blue) + teamHtml(CONFIG.teams.green);
 
   /* SCROLL REVEAL */

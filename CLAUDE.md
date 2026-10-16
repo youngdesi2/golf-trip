@@ -4,7 +4,7 @@ Single-file static website (`index.html`, no build step) for a 20-man Ryder Cup 
 
 ## Trip facts
 - Dates: Tue June 15 to Fri June 18, 2027. Lodging: Talamore Golf Villas.
-- 20 players, 10 per team. Captains: Team Blue, Jeffrey "G" Giovannone. Team Green, Justin Palermo. The other 18 players are TBD.
+- 20 players, 10 per team. Captains: Team Blue, Jeffrey "G" Giovannone. Team Green, Justin Palermo. 14 of 20 players are confirmed (listed in `CONFIG.pool`, captains included); 6 spots are still open and nobody has been assigned to a team yet.
 - Rounds (first tee, local time): 
   - Tue 6/15: Talamore Golf Club 8:00 AM, Mid South Club 2:00 PM
   - Wed 6/16: Mid Pines 8:00 AM, Pine Needles 2:00 PM
@@ -31,7 +31,7 @@ Single-file static website (`index.html`, no build step) for a 20-man Ryder Cup 
 - Phone first. Most of the group will open the link from a text message.
 
 ## Open items
-- Names and team assignments for the other 18 players
+- Names for the last 6 players, and team assignments for all 18 non-captains
 - Formats and matchups for each round
 - The remaining part of the bet total
 - MVP criteria or prize
