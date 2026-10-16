@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Boys Golf Trip 2027</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: top nav (Trip / Rosters), left-aligned scoreboard hero over a drifting topographic green, then scorecard-style sections. Single committed dark look. */
+:root {
+  --turf: #0b2a21;
+  --turf-2: #0f3226;
+  --chalk: #eaf4ec;
+  --muted: #8db8a3;
+  --flag: #ff5b3a;
+  --blue: #4da3ff;
+  --green: #5eea8a;
+  --rule: rgba(141, 184, 163, 0.22);
+  --display: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+  --body: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'DM Mono', ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--turf); }
+body { margin: 0; color: var(--chalk); font-family: var(--body); font-size: 16px; line-height: 1.55; overflow-x: hidden; }
+.inner {
+  max-width: 1040px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--chalk); }
+:focus-visible { outline: 2px solid var(--flag); outline-offset: 3px; }
+
+/* NAV */
+.nav-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 8px; border-bottom: 1px solid var(--rule); }
+.brand { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 20px; letter-spacing: .03em; }
+.links { display: flex; gap: 18px; }
+.links a { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; color: var(--muted); padding: 12px 2px 8px; border-bottom: 2px solid transparent; }
+.links a[aria-current="page"] { color: var(--chalk); border-bottom-color: var(--flag); }
+.links a:hover { color: var(--chalk); }
+
+/* HERO */
+.hero { position: relative; overflow: hidden; }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(11,42,33,0) 62%, var(--turf) 100%); }
+.hero-in { position: relative; z-index: 1; padding-block: 30px 40px; display: grid; gap: 28px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: clamp(60px, 17vw, 168px); line-height: .86; margin: 0; text-wrap: balance; }
+h1 .b { color: var(--blue); }
+h1 .g { color: var(--green); }
+h1 i { font-style: normal; font-size: .5em; color: var(--chalk); opacity: .8; padding: 0 .08em; }
+.lede { max-width: 46ch; font-size: 18px; margin: 0; opacity: .92; }
+
+.count-label { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.count { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; max-width: 640px; }
+.tile { background: rgba(255,255,255,.045); border: 1px solid var(--rule); border-top: 3px solid var(--chalk); padding: 10px 10px 8px; border-radius: 2px; min-width: 0; }
+.tile:last-child { border-top-color: var(--flag); }
+.tile b { display: block; font-family: var(--display); font-weight: 800; font-size: clamp(44px, 13vw, 104px); line-height: 1; font-variant-numeric: tabular-nums; }
+.tile:last-child b { color: var(--flag); }
+.tile small { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.teed { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 10vw, 80px); line-height: 1; color: var(--flag); margin: 0; }
+
+.track { max-width: 640px; }
+.bar { position: relative; height: 6px; background: rgba(255,255,255,.1); border-radius: 3px; margin: 30px 0 6px; }
+.bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--chalk); border-radius: 3px; width: 0%; }
+.bar em { position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.18); left: 0%; }
+.bar-end { position: absolute; right: -2px; top: -26px; width: 2px; height: 32px; background: var(--chalk); }
+.bar-end::after { content: ""; position: absolute; left: 2px; top: 0; border-left: 16px solid var(--flag); border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+.track p { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); max-width: 820px; border-top: 1px solid var(--rule); margin: 0; }
+.facts div { padding: 12px 16px 4px 0; min-width: 0; }
+.facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: 2px 0 0; font-weight: 600; font-size: 17px; }
+
+/* SECTIONS */
+section { padding-block: 44px 8px; }
+h2 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(34px, 7vw, 52px); line-height: 1; margin: 0 0 22px; display: flex; align-items: center; gap: 16px; text-wrap: balance; }
+h2::after { content: ""; flex: 1; height: 1px; background: var(--rule); min-width: 24px; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; }
+.panel { background: var(--turf-2); border: 1px solid var(--rule); padding: 20px; border-radius: 2px; min-width: 0; }
+.panel h3 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 28px; margin: 0 0 4px; line-height: 1.05; }
+.panel p { margin: 0 0 12px; opacity: .9; }
+.rows { margin: 14px 0 0; display: grid; }
+.rows div { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-top: 1px solid var(--rule); }
+.rows dt { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.rows dd { margin: 0; text-align: right; font-weight: 500; }
+.btn { display: inline-block; margin-top: 6px; background: var(--flag); color: #1a0804; text-decoration: none; padding: 10px 16px; border-radius: 2px; border: 0; font: 600 15px var(--body); cursor: pointer; }
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--chalk); border: 1px solid var(--chalk); }
+.btn.ghost:hover { background: rgba(255,255,255,.08); filter: none; }
+
+/* TEE SHEET */
+.sheet { border-top: 1px solid var(--rule); }
+.day { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.date small { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--muted); }
+.date b { font-family: var(--display); font-weight: 800; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; }
+.rounds { display: grid; gap: 14px; min-width: 0; }
+.round { min-width: 0; }
+.round + .round { padding-top: 14px; border-top: 1px dashed var(--rule); }
+.rhead { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.rhead h3 { margin: 0; font-size: 19px; font-weight: 600; }
+.clink { color: var(--chalk); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.clink::after { content: " \2197"; font-size: .8em; color: var(--muted); }
+.clink:hover { color: var(--flag); text-decoration-color: var(--flag); }
+.clink:hover::after { color: var(--flag); }
+.rhead p { margin: 2px 0 0; color: var(--muted); font-size: 14px; font-family: var(--mono); }
+.fmt { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--rule); padding: 5px 9px; border-radius: 2px; white-space: nowrap; color: var(--muted); }
+@media (max-width: 520px) {
+  .day { grid-template-columns: 52px minmax(0, 1fr); gap: 12px; }
+  .rhead { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .fmt { justify-self: start; }
+}
+
+/* MATCHUPS */
+details.mu { margin-top: 10px; }
+details.mu summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 2px; background: rgba(255,255,255,.03); }
+details.mu summary::-webkit-details-marker { display: none; }
+details.mu summary::after { content: "+"; font-size: 16px; line-height: 1; color: var(--muted); }
+details.mu[open] summary::after { content: "\2212"; }
+details.mu summary span { margin-left: auto; color: var(--muted); }
+.ml { display: grid; padding: 4px 4px 0; }
+.m { display: grid; grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr); gap: 8px; align-items: center; padding: 10px 0; border-top: 1px dashed var(--rule); }
+.m:first-child { border-top: 0; }
+.m .s { min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.m .s.b { color: var(--blue); }
+.m .s.g { color: var(--green); text-align: right; }
+.m .s.tbd { opacity: .55; }
+.m .s.win { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.m .v { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: center; text-transform: uppercase; }
+
+/* CUP + TEAMS */
+.b { --tc: var(--blue); }
+.g { --tc: var(--green); }
+.cup { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px; background: var(--turf-2); border: 1px solid var(--rule); padding: 18px 20px; border-radius: 2px; margin-bottom: 14px; }
+.cup .side { min-width: 0; color: var(--tc); }
+.cup .side:last-child { text-align: right; }
+.cup .nm { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(20px, 5vw, 30px); line-height: 1; }
+.cup .cp { font-family: var(--mono); font-size: 11px; color: var(--muted); margin: 6px 0 4px; overflow-wrap: anywhere; line-height: 1.35; }
+.cup .pts { font-family: var(--display); font-weight: 900; font-size: clamp(48px, 12vw, 84px); line-height: 1; font-variant-numeric: tabular-nums; }
+.cup .mid { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: center; max-width: 100px; }
+.cup-note { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 18px; }
+.team { background: var(--turf-2); border: 1px solid var(--rule); border-top: 5px solid var(--tc); padding: 18px 20px 12px; border-radius: 2px; min-width: 0; }
+.team header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.team h3 { margin: 0; font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 34px; line-height: 1; color: var(--tc); }
+.team header span { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.team ul { list-style: none; margin: 0; padding: 0; }
+.team li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--rule); min-width: 0; }
+.team li.cap span:first-child { font-weight: 600; font-size: 17px; overflow-wrap: anywhere; }
+.badge { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--tc); color: var(--tc); padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
+.team li.tba { color: var(--muted); border-top-style: dashed; font-family: var(--mono); font-size: 13px; letter-spacing: .08em; }
+
+/* PRIZE POOL */
+.panel .label { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.money { font-family: var(--display); font-weight: 900; font-size: clamp(64px, 17vw, 132px); line-height: .9; color: var(--flag); font-variant-numeric: tabular-nums; }
+.money.sm { font-size: clamp(52px, 12vw, 84px); }
+.money small { font-family: var(--mono); font-weight: 400; font-size: 14px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+.panel .blurb { margin: 10px 0 0; opacity: .9; }
+.panel .blurb b { color: var(--flag); }
+.board { margin-top: 18px; border-top: 1px solid var(--rule); }
+.pr { display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1fr); gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+.pc { min-width: 0; }
+.pc small { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.pc b { display: block; font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.pc span { font-family: var(--mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+@media (max-width: 520px) { .pr { grid-template-columns: 52px minmax(0, 1fr) minmax(0, 1fr); gap: 10px; } }
+
+/* MVP */
+.mvp-q { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(36px, 9vw, 64px); line-height: .95; margin: 0 0 18px; text-wrap: balance; }
+.mvp-win { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 16px; border-top: 1px solid var(--rule); padding-top: 14px; }
+.mvp-win .label { margin: 0; }
+.mvp-name { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: clamp(40px, 10vw, 72px); line-height: 1; color: var(--flag); }
+
+footer { padding-block: 56px 48px; }
+footer p { margin: 0; }
+.sign { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: clamp(34px, 9vw, 72px); line-height: .95; }
+.sign span { color: var(--flag); }
+footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; margin-top: 12px; }
+</style>
+<meta property="og:title" content="Boys Golf Trip 2027">
+<meta property="og:description" content="Team Blue vs Team Green. June 15 to 18, 2027, Sandhills, NC. Countdown, tee times, matchups, prize pool and rosters.">
+<meta property="og:type" content="website">
+<meta name="description" content="Team Blue vs Team Green. June 15 to 18, 2027, Sandhills, NC. Countdown, tee times, matchups, prize pool and rosters.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<nav>
+  <div class="inner nav-in">
+    <span class="brand">Boys Golf Trip &rsquo;27</span>
+    <div class="links">
+      <a href="#trip" id="navTrip">Trip</a>
+      <a href="#rosters" id="navRosters">Rosters</a>
+    </div>
+  </div>
+</nav>
+
+<div id="viewTrip">
+  <header class="hero">
+    <canvas id="contours" aria-hidden="true"></canvas>
+    <div class="inner hero-in">
+      <p class="eyebrow">Boys golf trip &middot; June 15 to 18, 2027</p>
+      <h1><span class="b">Blue</span> <i>vs</i> <span class="g">Green</span></h1>
+      <p class="lede">Twenty players. Two captains. Four days of golf in the Sandhills of North Carolina.</p>
+
+      <div>
+        <p class="count-label" id="countLabel">Day one in</p>
+        <div class="count" id="count" role="timer" aria-labelledby="countLabel">
+          <div class="tile"><b id="cd">000</b><small>Days</small></div>
+          <div class="tile"><b id="ch">00</b><small>Hours</small></div>
+          <div class="tile"><b id="cm">00</b><small>Min</small></div>
+          <div class="tile"><b id="cs">00</b><small>Sec</small></div>
+        </div>
+        <p class="teed" id="teed" hidden>Fore! It&rsquo;s tee time.</p>
+      </div>
+
+      <div class="track">
+        <div class="bar"><i id="barFill"></i><em id="barBall"></em><span class="bar-end"></span></div>
+        <p id="barText">0% of the wait is over</p>
+      </div>
+
+      <dl class="facts">
+        <div><dt>When</dt><dd>June 15 to 18, 2027</dd></div>
+        <div><dt>Where</dt><dd>Sandhills, North Carolina</dd></div>
+        <div><dt>Format</dt><dd>20-man Ryder Cup</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <main>
+    <section class="inner">
+      <h2>The Trip</h2>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Sandhills golf</h3>
+          <p>Most of the courses are in and around Southern Pines. Tobacco Road is in Sanford and Tot Hill Farm is in Asheboro.</p>
+          <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Southern+Pines+North+Carolina+golf" target="_blank" rel="noopener">Open in Maps</a>
+        </div>
+        <div class="panel">
+          <h3>The details</h3>
+          <dl class="rows">
+            <div><dt>Dates</dt><dd>Jun 15 to 18, 2027</dd></div>
+            <div><dt>Players</dt><dd>20, ten per team</dd></div>
+            <div><dt>Lodging</dt><dd>Talamore Golf Villas</dd></div>
+            <div><dt>Formats</dt><dd>To be announced</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="inner">
+      <h2>Tee Sheet</h2>
+      <div class="sheet" id="sheetList"></div>
+    </section>
+
+    <section class="inner">
+      <h2>The Prize Pool</h2>
+      <div class="panel">
+        <p class="label">Team match</p>
+        <div class="money" id="mTeam"></div>
+        <p class="blurb">Win the cup and every man on the winning team collects <b id="mTeamEach"></b>.</p>
+        <p class="blurb">Winning team: <b>TBD</b></p>
+      </div>
+      <div class="grid2" style="margin-top:18px">
+        <div class="panel">
+          <p class="label">Skins</p>
+          <div class="money sm" id="mSkins"></div>
+          <p class="blurb"><span id="mSkinsTot"></span> up for grabs across the four days.</p>
+        </div>
+        <div class="panel">
+          <p class="label">Closest to the pin</p>
+          <div class="money sm" id="mCtp"></div>
+          <p class="blurb"><span id="mCtpTot"></span> up for grabs across the four days.</p>
+        </div>
+      </div>
+      <div class="board" id="prizeBoard"></div>
+    </section>
+
+    <section class="inner">
+      <h2>Trip MVP</h2>
+      <div class="panel">
+        <p class="mvp-q">Who will be this year&rsquo;s MVP?</p>
+        <div class="mvp-win">
+          <p class="label">The pick</p>
+          <span class="mvp-name" id="mvpName"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="inner">
+      <h2>The Cup</h2>
+      <div class="cup">
+        <div class="side b"><div class="nm">Team Blue</div><div class="cp" id="capB"></div><div class="pts" id="ptsB">0</div></div>
+        <div class="mid">Cup standings</div>
+        <div class="side g"><div class="nm">Team Green</div><div class="cp" id="capG"></div><div class="pts" id="ptsG">0</div></div>
+      </div>
+      <p class="cup-note">One point per match win, half a point for a halve. Matchups get posted on each round above.</p>
+      <a class="btn ghost" href="#rosters">View the rosters</a>
+    </section>
+  </main>
+</div>
+
+<main id="viewRosters" hidden>
+  <section class="inner">
+    <h2>Rosters</h2>
+    <p class="cup-note">Both captains are set. Team members get added as the rosters fill.</p>
+    <div class="grid2" id="rosterGrid"></div>
+    <p style="margin-top:22px"><a class="btn ghost" href="#trip">Back to the trip</a></p>
+  </section>
+</main>
+
+<footer class="inner">
+  <p class="sign">See you on<br>the first <span>tee.</span></p>
+  <p class="mono">Blue vs Green. Bragging rights are permanent.</p>
+</footer>
+
+<script>
+(function () {
+  var CONFIG = {
+    dayOne: new Date('2027-06-15T00:00:00-04:00'),
+    startedWaiting: new Date('2026-10-16T00:00:00-05:00'),
+    teamSize: 10,
+    matchesPerRound: 5,
+    teams: {
+      blue:  { name: 'Team Blue',  cls: 'b', captain: 'Jeffrey “G” Giovannone', players: [] },
+      green: { name: 'Team Green', cls: 'g', captain: 'Justin Palermo', players: [] }
+    }
+  };
+
+  /* Each round holds its matches. Fill blue and green with player names and set winner to
+     'blue', 'green' or 'halved' once a match is played. */
+  function openMatches(n) {
+    var list = [];
+    for (var i = 0; i < n; i++) list.push({ blue: [], green: [], winner: null });
+    return list;
+  }
+  function round(course, time) {
+    return { course: course, time: time || 'TBD', format: 'TBD', matches: openMatches(CONFIG.matchesPerRound) };
+  }
+  var DAYS = [
+    { dow: 'TUE', d: 15, skins: [], ctp: [], rounds: [round('Talamore Golf Club', '8:00 AM'), round('Mid South Club', '2:00 PM')] },
+    { dow: 'WED', d: 16, skins: [], ctp: [], rounds: [round('Mid Pines', '8:00 AM'), round('Pine Needles', '2:00 PM')] },
+    { dow: 'THU', d: 17, skins: [], ctp: [], rounds: [round('Tobacco Road Golf Club', '8:00 AM'), round('Southern Pines Golf Club', '2:00 PM')] },
+    { dow: 'FRI', d: 18, skins: [], ctp: [], rounds: [round('Tot Hill Farm Golf Club', '9:00 to 9:40 AM')] }
+  ];
+
+  function $(id) { return document.getElementById(id); }
+  function pad(n, w) { return String(n).padStart(w, '0'); }
+
+  /* PRIZE POOL. Fill each day's skins and ctp arrays with winner names as they are decided. */
+  var PRIZES = { teamPot: 5000, teamEach: 500, skinsPerDay: 600, ctpPerDay: 400 };
+  function usd(n) { return '$' + n.toLocaleString('en-US'); }
+  $('mTeam').textContent = usd(PRIZES.teamPot);
+  $('mTeamEach').textContent = usd(PRIZES.teamEach);
+  $('mSkins').innerHTML = usd(PRIZES.skinsPerDay) + '<small> a day</small>';
+  $('mCtp').innerHTML = usd(PRIZES.ctpPerDay) + '<small> a day</small>';
+  $('mSkinsTot').textContent = usd(PRIZES.skinsPerDay * DAYS.length);
+  $('mCtpTot').textContent = usd(PRIZES.ctpPerDay * DAYS.length);
+  function who(list) { return list.length ? list.join(', ') : 'TBD'; }
+  /* Set winner to a player's name once the MVP is crowned. */
+  var MVP = { winner: null };
+  $('mvpName').textContent = MVP.winner || 'TBD';
+  $('prizeBoard').innerHTML = DAYS.map(function (day) {
+    return '<div class="pr"><div class="date"><small>' + day.dow + '</small><b>' + day.d + '</b></div>' +
+      '<div class="pc"><small>Skins</small><b>' + usd(PRIZES.skinsPerDay) + '</b><span>Winners: ' + who(day.skins) + '</span></div>' +
+      '<div class="pc"><small>Closest to the pin</small><b>' + usd(PRIZES.ctpPerDay) + '</b><span>Winners: ' + who(day.ctp) + '</span></div></div>';
+  }).join('');
+
+  /* COUNTDOWN */
+  function tick() {
+    var now = new Date();
+    var ms = CONFIG.dayOne - now;
+    if (ms <= 0) {
+      $('count').hidden = true;
+      $('countLabel').hidden = true;
+      $('teed').hidden = false;
+      $('barFill').style.width = '100%';
+      $('barBall').style.left = '100%';
+      $('barText').textContent = 'The wait is over';
+      return;
+    }
+    var s = Math.floor(ms / 1000);
+    var d = Math.floor(s / 86400); s -= d * 86400;
+    var h = Math.floor(s / 3600); s -= h * 3600;
+    var m = Math.floor(s / 60); s -= m * 60;
+    $('cd').textContent = pad(d, 3);
+    $('ch').textContent = pad(h, 2);
+    $('cm').textContent = pad(m, 2);
+    $('cs').textContent = pad(s, 2);
+    var total = CONFIG.dayOne - CONFIG.startedWaiting;
+    var pct = Math.max(0, Math.min(1, (now - CONFIG.startedWaiting) / total)) * 100;
+    $('barFill').style.width = pct + '%';
+    $('barBall').style.left = pct + '%';
+    $('barText').textContent = Math.round(pct) + '% of the wait is over';
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* TEE SHEET WITH MATCHUPS */
+  function side(names) { return names.length ? names.join(' / ') : 'TBD'; }
+  function matchRow(m) {
+    var halved = m.winner === 'halved';
+    return '<div class="m">' +
+      '<span class="s b' + (m.blue.length ? '' : ' tbd') + (m.winner === 'blue' ? ' win' : '') + '">' + side(m.blue) + '</span>' +
+      '<span class="v">' + (halved ? '&frac12;' : 'vs') + '</span>' +
+      '<span class="s g' + (m.green.length ? '' : ' tbd') + (m.winner === 'green' ? ' win' : '') + '">' + side(m.green) + '</span></div>';
+  }
+  var COURSE_URLS = {
+    'Talamore Golf Club': 'https://www.talamoregolfresort.com/',
+    'Mid South Club': 'https://www.talamoregolfresort.com/mid-south-club/',
+    'Mid Pines': 'https://midpinesinn.com/',
+    'Pine Needles': 'https://pineneedleslodge.com/',
+    'Tobacco Road Golf Club': 'http://www.tobaccoroadgolf.com',
+    'Southern Pines Golf Club': 'https://southernpinesgolfclub.com/',
+    'Tot Hill Farm Golf Club': 'http://www.tothillfarm.com'
+  };
+  function roundHtml(r) {
+    var set = r.matches.filter(function (m) { return m.blue.length && m.green.length; }).length;
+    var label = set ? set + ' of ' + r.matches.length + ' set' : r.matches.length + ' matches · TBD';
+    return '<div class="round"><div class="rhead"><div><h3><a class="clink" href="' + COURSE_URLS[r.course] + '" target="_blank" rel="noopener">' + r.course + '</a></h3><p>' +
+      (r.time === 'TBD' ? 'Tee time TBD' : r.time) + '</p></div><span class="fmt">' +
+      (r.format === 'TBD' ? 'Format TBD' : r.format) + '</span></div>' +
+      '<details class="mu"><summary>Matchups <span>' + label + '</span></summary><div class="ml">' +
+      r.matches.map(matchRow).join('') + '</div></details></div>';
+  }
+  $('sheetList').innerHTML = DAYS.map(function (day) {
+    return '<div class="day"><div class="date"><small>' + day.dow + '</small><b>' + day.d + '</b></div>' +
+      '<div class="rounds">' + day.rounds.map(roundHtml).join('') + '</div></div>';
+  }).join('');
+
+  /* CUP STANDINGS, computed from match results */
+  var pb = 0, pg = 0;
+  DAYS.forEach(function (day) {
+    day.rounds.forEach(function (r) {
+      r.matches.forEach(function (m) {
+        if (m.winner === 'blue') pb += 1;
+        else if (m.winner === 'green') pg += 1;
+        else if (m.winner === 'halved') { pb += 0.5; pg += 0.5; }
+      });
+    });
+  });
+  $('ptsB').textContent = pb;
+  $('ptsG').textContent = pg;
+  $('capB').textContent = 'Captain: ' + CONFIG.teams.blue.captain;
+  $('capG').textContent = 'Captain: ' + CONFIG.teams.green.captain;
+
+  /* ROSTERS */
+  function teamHtml(t) {
+    var rows = '<li class="cap"><span>' + t.captain + '</span><span class="badge">Captain</span></li>';
+    t.players.forEach(function (p) { rows += '<li><span>' + p + '</span></li>'; });
+    for (var i = 1 + t.players.length; i < CONFIG.teamSize; i++) rows += '<li class="tba"><span>TBD</span></li>';
+    return '<div class="team ' + t.cls + '"><header><h3>' + t.name + '</h3><span>' + (1 + t.players.length) +
+      ' of ' + CONFIG.teamSize + ' set</span></header><ul>' + rows + '</ul></div>';
+  }
+  $('rosterGrid').innerHTML = teamHtml(CONFIG.teams.blue) + teamHtml(CONFIG.teams.green);
+
+  /* CONTOURS: a drifting green with a pin. Every fifth ring is an index contour. */
+  var cv = $('contours');
+  var ctx = cv.getContext('2d');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var w = 0, h = 0, t = 0;
+
+  function size() {
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = r.width; h = r.height;
+    if (!w || !h) return;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function draw() {
+    if (!w || !h) return;
+    ctx.clearRect(0, 0, w, h);
+    var cx = w * (w < 700 ? 0.8 : 0.78);
+    var cy = h * 0.4;
+    var maxR = Math.hypot(Math.max(cx, w - cx), Math.max(cy, h - cy)) * 1.05;
+    var rings = 24;
+    for (var i = 1; i <= rings; i++) {
+      var base = maxR * i / rings;
+      var amp = Math.sqrt(i / rings);
+      ctx.beginPath();
+      for (var a = 0; a <= 360; a += 4) {
+        var th = a * Math.PI / 180;
+        var wob = 1 + amp * (0.10 * Math.sin(3 * th + t + i * 0.45) + 0.06 * Math.sin(5 * th - t * 0.7 + i * 0.8) + 0.04 * Math.sin(2 * th + t * 0.5));
+        var x = cx + Math.cos(th) * base * wob * 1.25;
+        var y = cy + Math.sin(th) * base * wob * 0.85;
+        if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      var idx = i % 5 === 0;
+      ctx.strokeStyle = idx ? 'rgba(141,184,163,0.36)' : 'rgba(141,184,163,0.15)';
+      ctx.lineWidth = idx ? 1.4 : 1;
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 9, 4, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#061a14';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(234,244,236,0.85)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - 74);
+    ctx.strokeStyle = '#eaf4ec';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    var wave = Math.sin(t * 6) * 3;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 74);
+    ctx.lineTo(cx + 36 + wave, cy - 63);
+    ctx.lineTo(cx, cy - 52);
+    ctx.closePath();
+    ctx.fillStyle = '#ff5b3a';
+    ctx.fill();
+  }
+
+  function loop() {
+    t += 0.006;
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  /* VIEWS: Trip and Rosters */
+  function route() {
+    var rosters = location.hash === '#rosters';
+    $('viewTrip').hidden = rosters;
+    $('viewRosters').hidden = !rosters;
+    $('navTrip').setAttribute('aria-current', rosters ? 'false' : 'page');
+    $('navRosters').setAttribute('aria-current', rosters ? 'page' : 'false');
+    if (!rosters) size();
+  }
+  window.addEventListener('hashchange', function () { route(); window.scrollTo(0, 0); });
+  window.addEventListener('resize', size);
+  route();
+  if (!reduce) requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>
