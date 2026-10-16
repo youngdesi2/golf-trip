@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Boys Golf Trip 2027</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#0b2a21">
+<script>document.documentElement.className+=' js'</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230b2a21'/%3E%3Cpath d='M26 50V12' stroke='%23eaf4ec' stroke-width='4'/%3E%3Cpath d='M26 12l22 9-22 9z' fill='%23ff5b3a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
@@ -181,21 +183,69 @@ footer p { margin: 0; }
 .sign { font-family: var(--display); font-weight: 900; text-transform: uppercase; font-size: clamp(34px, 9vw, 72px); line-height: .95; }
 .sign span { color: var(--flag); }
 footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; margin-top: 12px; }
+/* POLISH: grain, sticky nav, reveals, live view */
+body::before { content: ""; position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+nav { position: sticky; top: 0; z-index: 20; background: rgba(11,42,33,.82); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.live-dot { display: none; width: 8px; height: 8px; border-radius: 50%; background: var(--flag); margin-left: 6px; vertical-align: 1px; animation: pulse 1.6s infinite; }
+.has-live .live-dot { display: inline-block; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,91,58,.7); } 70%,100% { box-shadow: 0 0 0 10px rgba(255,91,58,0); } }
+.js .rv { opacity: 0; transform: translateY(22px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0s); }
+.js .rv.in { opacity: 1; transform: none; }
+.js .hero-in > * { animation: rise .9s cubic-bezier(.2,.7,.2,1) both; }
+.js .hero-in > *:nth-child(2) { animation-delay: .08s; } .js .hero-in > *:nth-child(3) { animation-delay: .16s; }
+.js .hero-in > *:nth-child(4) { animation-delay: .24s; } .js .hero-in > *:nth-child(5) { animation-delay: .32s; } .js .hero-in > *:nth-child(6) { animation-delay: .4s; }
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+h1 .b, h1 .g { display: inline-block; text-shadow: 0 0 60px color-mix(in srgb, currentColor 35%, transparent); }
+.tile b.tk { animation: tk .35s ease; }
+@keyframes tk { from { transform: translateY(-14%); opacity: .4; } to { transform: none; opacity: 1; } }
+.bar i { background: linear-gradient(90deg, rgba(234,244,236,.5), var(--chalk)); transition: width 1s ease; }
+.panel, .team, .cup { transition: transform .25s ease, border-color .25s ease; }
+@media (hover: hover) { .panel:hover, .team:hover { transform: translateY(-3px); border-color: rgba(141,184,163,.5); } }
+.day.today { background: linear-gradient(90deg, rgba(255,91,58,.10), transparent 70%); box-shadow: inset 3px 0 0 var(--flag); padding-left: 12px; }
+.tag { display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; margin-left: 8px; vertical-align: 2px; border: 1px solid var(--rule); color: var(--muted); }
+.tag.live { border-color: var(--flag); color: var(--flag); }
+.tag.final { border-color: var(--chalk); color: var(--chalk); }
+.m .st { grid-column: 1 / -1; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; text-align: center; color: var(--muted); margin-top: -4px; }
+.m .st.b { color: var(--blue); } .m .st.g { color: var(--green); }
+.cup.live-cup { border-color: rgba(255,91,58,.45); }
+.btnrow { display: flex; flex-wrap: wrap; gap: 10px; }
+.lv-round { margin-bottom: 18px; }
+.lv-round h3 { font-size: 22px; font-family: var(--display); text-transform: uppercase; font-weight: 800; margin: 0 0 2px; }
+.lv-sub { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+.lv-empty { text-align: left; }
+.lv-empty .teed { font-size: clamp(30px, 8vw, 56px); color: var(--chalk); }
+.upd { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 18px; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--chalk); color: var(--turf); font: 600 14px var(--body); padding: 10px 16px; border-radius: 2px; opacity: 0; pointer-events: none; transition: .3s; z-index: 60; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) {
+  .js .rv, .js .hero-in > * { opacity: 1; transform: none; animation: none; transition: none; }
+  .tile b.tk, .live-dot { animation: none; }
+}
 </style>
-<meta property="og:title" content="Boys Golf Trip 2027">
-<meta property="og:description" content="Team Blue vs Team Green. June 15 to 18, 2027, Sandhills, NC. Countdown, tee times, matchups, prize pool and rosters.">
+<meta property="og:title" content="Boys Golf Trip 2027: Blue vs Green">
+<meta property="og:site_name" content="Boys Golf Trip 2027">
+<meta property="og:url" content="https://youngdesi2.github.io/golf-trip/">
+<meta property="og:image" content="https://youngdesi2.github.io/golf-trip/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Blue vs Green. Boys Golf Trip, June 15 to 18, 2027, Sandhills, North Carolina.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://youngdesi2.github.io/golf-trip/og.png">
+<meta property="og:description" content="Team Blue vs Team Green. June 15 to 18, 2027, Sandhills, NC. Countdown, tee times, live scoring, prize pool and rosters.">
 <meta property="og:type" content="website">
-<meta name="description" content="Team Blue vs Team Green. June 15 to 18, 2027, Sandhills, NC. Countdown, tee times, matchups, prize pool and rosters.">
+<meta name="description" content="Team Blue vs Team Green. June 15 to 18, 2027, Sandhills, NC. Countdown, tee times, live scoring, prize pool and rosters.">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
 </head>
 <body>
 
 
-<nav>
+<nav id="nav">
   <div class="inner nav-in">
     <span class="brand">Boys Golf Trip &rsquo;27</span>
     <div class="links">
       <a href="#trip" id="navTrip">Trip</a>
+      <a href="#live" id="navLive">Live<i class="live-dot"></i></a>
       <a href="#rosters" id="navRosters">Rosters</a>
     </div>
   </div>
@@ -225,6 +275,8 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
         <p id="barText">0% of the wait is over</p>
       </div>
 
+      <div class="btnrow"><a class="btn" href="#live">Live scoring</a><button class="btn ghost" id="shareBtn" type="button">Share the link</button></div>
+
       <dl class="facts">
         <div><dt>When</dt><dd>June 15 to 18, 2027</dd></div>
         <div><dt>Where</dt><dd>Sandhills, North Carolina</dd></div>
@@ -234,7 +286,7 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
   </header>
 
   <main>
-    <section class="inner">
+    <section class="inner rv">
       <h2>The Trip</h2>
       <div class="grid2">
         <div class="panel">
@@ -254,12 +306,12 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
       </div>
     </section>
 
-    <section class="inner">
+    <section class="inner rv">
       <h2>Tee Sheet</h2>
       <div class="sheet" id="sheetList"></div>
     </section>
 
-    <section class="inner">
+    <section class="inner rv">
       <h2>The Prize Pool</h2>
       <div class="panel">
         <p class="label">Team match</p>
@@ -282,7 +334,7 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
       <div class="board" id="prizeBoard"></div>
     </section>
 
-    <section class="inner">
+    <section class="inner rv">
       <h2>Trip MVP</h2>
       <div class="panel">
         <p class="mvp-q">Who will be this year&rsquo;s MVP?</p>
@@ -293,7 +345,7 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
       </div>
     </section>
 
-    <section class="inner">
+    <section class="inner rv">
       <h2>The Cup</h2>
       <div class="cup">
         <div class="side b"><div class="nm">Team Blue</div><div class="cp" id="capB"></div><div class="pts" id="ptsB">0</div></div>
@@ -306,8 +358,22 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
   </main>
 </div>
 
-<main id="viewRosters" hidden>
+<main id="viewLive" hidden>
   <section class="inner">
+    <h2>Live Scoring</h2>
+    <div class="cup live-cup">
+      <div class="side b"><div class="nm">Team Blue</div><div class="pts" id="lvB">0</div></div>
+      <div class="mid" id="lvMid">Cup standings</div>
+      <div class="side g"><div class="nm">Team Green</div><div class="pts" id="lvG">0</div></div>
+    </div>
+    <p class="upd" id="lvUpd"></p>
+    <div id="lvBody"></div>
+    <p style="margin-top:22px"><a class="btn ghost" href="#trip">Back to the trip</a></p>
+  </section>
+</main>
+
+<main id="viewRosters" hidden>
+  <section class="inner rv">
     <h2>Rosters</h2>
     <p class="cup-note">Both captains are set. Team members get added as the rosters fill.</p>
     <div class="grid2" id="rosterGrid"></div>
@@ -320,59 +386,113 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
   <p class="mono">Blue vs Green. Bragging rights are permanent.</p>
 </footer>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<!--
+ EDIT HERE DURING THE TRIP. Commit the change on GitHub and every open page picks it up within a minute or so.
+   round.state: "upcoming" | "live" | "final"
+   match.winner: null | "blue" | "green" | "halved"   (counts toward cup points)
+   match.lead: null | "blue" | "green"   (who is up right now, for live matches)
+   match.status: text such as "2 UP thru 11" or "AS thru 14" or "3&2"
+   blue / green: player names, e.g. ["Name One", "Name Two"]
+   skins / ctp: winner names for the day.  mvp: a player name, or null.
+   updated: ISO time of the last edit, e.g. "2027-06-15T13:42:00-04:00". -->
+<script type="application/json" id="trip-data">
+{
+  "updated": null,
+  "mvp": null,
+  "days": [
+    {"skins":[],"ctp":[],"rounds":[
+      {"format":"TBD","state":"upcoming","matches":[{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""}]},
+      {"format":"TBD","state":"upcoming","matches":[{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""}]}]},
+    {"skins":[],"ctp":[],"rounds":[
+      {"format":"TBD","state":"upcoming","matches":[{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""}]},
+      {"format":"TBD","state":"upcoming","matches":[{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""}]}]},
+    {"skins":[],"ctp":[],"rounds":[
+      {"format":"TBD","state":"upcoming","matches":[{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""}]},
+      {"format":"TBD","state":"upcoming","matches":[{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""}]}]},
+    {"skins":[],"ctp":[],"rounds":[
+      {"format":"TBD","state":"upcoming","matches":[{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""},{"blue":[],"green":[],"winner":null,"lead":null,"status":""}]}]}
+  ]
+}
+</script>
+
 <script>
 (function () {
   var CONFIG = {
     dayOne: new Date('2027-06-15T00:00:00-04:00'),
     startedWaiting: new Date('2026-10-16T00:00:00-05:00'),
     teamSize: 10,
-    matchesPerRound: 5,
+    shareUrl: 'https://youngdesi2.github.io/golf-trip/',
     teams: {
       blue:  { name: 'Team Blue',  cls: 'b', captain: 'Jeffrey “G” Giovannone', players: [] },
       green: { name: 'Team Green', cls: 'g', captain: 'Justin Palermo', players: [] }
     }
   };
-
-  /* Each round holds its matches. Fill blue and green with player names and set winner to
-     'blue', 'green' or 'halved' once a match is played. */
-  function openMatches(n) {
-    var list = [];
-    for (var i = 0; i < n; i++) list.push({ blue: [], green: [], winner: null });
-    return list;
-  }
-  function round(course, time) {
-    return { course: course, time: time || 'TBD', format: 'TBD', matches: openMatches(CONFIG.matchesPerRound) };
-  }
-  var DAYS = [
-    { dow: 'TUE', d: 15, skins: [], ctp: [], rounds: [round('Talamore Golf Club', '8:00 AM'), round('Mid South Club', '2:00 PM')] },
-    { dow: 'WED', d: 16, skins: [], ctp: [], rounds: [round('Mid Pines', '8:00 AM'), round('Pine Needles', '2:00 PM')] },
-    { dow: 'THU', d: 17, skins: [], ctp: [], rounds: [round('Tobacco Road Golf Club', '8:00 AM'), round('Southern Pines Golf Club', '2:00 PM')] },
-    { dow: 'FRI', d: 18, skins: [], ctp: [], rounds: [round('Tot Hill Farm Golf Club', '9:00 to 9:40 AM')] }
+  /* Fixed schedule. Results, formats and matchups live in the #trip-data JSON block. */
+  var SCHEDULE = [
+    { dow: 'TUE', d: 15, rounds: [['Talamore Golf Club', '8:00 AM'], ['Mid South Club', '2:00 PM']] },
+    { dow: 'WED', d: 16, rounds: [['Mid Pines', '8:00 AM'], ['Pine Needles', '2:00 PM']] },
+    { dow: 'THU', d: 17, rounds: [['Tobacco Road Golf Club', '8:00 AM'], ['Southern Pines Golf Club', '2:00 PM']] },
+    { dow: 'FRI', d: 18, rounds: [['Tot Hill Farm Golf Club', '9:00 to 9:40 AM']] }
   ];
+  var COURSE_URLS = {
+    'Talamore Golf Club': 'https://www.talamoregolfresort.com/',
+    'Mid South Club': 'https://www.talamoregolfresort.com/mid-south-club/',
+    'Mid Pines': 'https://midpinesinn.com/',
+    'Pine Needles': 'https://pineneedleslodge.com/',
+    'Tobacco Road Golf Club': 'http://www.tobaccoroadgolf.com',
+    'Southern Pines Golf Club': 'https://southernpinesgolfclub.com/',
+    'Tot Hill Farm Golf Club': 'http://www.tothillfarm.com'
+  };
+  var PRIZES = { teamPot: 5000, teamEach: 500, skinsPerDay: 600, ctpPerDay: 400 };
 
   function $(id) { return document.getElementById(id); }
   function pad(n, w) { return String(n).padStart(w, '0'); }
-
-  /* PRIZE POOL. Fill each day's skins and ctp arrays with winner names as they are decided. */
-  var PRIZES = { teamPot: 5000, teamEach: 500, skinsPerDay: 600, ctpPerDay: 400 };
   function usd(n) { return '$' + n.toLocaleString('en-US'); }
+  function esc(x) { return String(x == null ? '' : x).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function names(list) { return list && list.length ? list.map(esc).join(', ') : 'TBD'; }
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var DATA = { updated: null, mvp: null, days: [] };
+  function readData(node) {
+    try { return JSON.parse(node.textContent); } catch (e) { return null; }
+  }
+  var first = readData($('trip-data'));
+  if (first) DATA = first;
+
+  /* Merge schedule with data so a short or missing data block still renders. */
+  function rounds() {
+    var out = [];
+    SCHEDULE.forEach(function (day, di) {
+      var dd = (DATA.days && DATA.days[di]) || {};
+      day.rounds.forEach(function (r, ri) {
+        var rd = (dd.rounds && dd.rounds[ri]) || {};
+        var matches = rd.matches && rd.matches.length ? rd.matches : [{}, {}, {}, {}, {}];
+        out.push({ di: di, ri: ri, day: day, course: r[0], time: r[1], format: rd.format || 'TBD', state: rd.state || 'upcoming', matches: matches });
+      });
+    });
+    return out;
+  }
+
+  /* STATIC PRIZE POOL */
   $('mTeam').textContent = usd(PRIZES.teamPot);
   $('mTeamEach').textContent = usd(PRIZES.teamEach);
   $('mSkins').innerHTML = usd(PRIZES.skinsPerDay) + '<small> a day</small>';
   $('mCtp').innerHTML = usd(PRIZES.ctpPerDay) + '<small> a day</small>';
-  $('mSkinsTot').textContent = usd(PRIZES.skinsPerDay * DAYS.length);
-  $('mCtpTot').textContent = usd(PRIZES.ctpPerDay * DAYS.length);
-  function who(list) { return list.length ? list.join(', ') : 'TBD'; }
-  /* Set winner to a player's name once the MVP is crowned. */
-  var MVP = { winner: null };
-  $('mvpName').textContent = MVP.winner || 'TBD';
-  $('prizeBoard').innerHTML = DAYS.map(function (day) {
-    return '<div class="pr"><div class="date"><small>' + day.dow + '</small><b>' + day.d + '</b></div>' +
-      '<div class="pc"><small>Skins</small><b>' + usd(PRIZES.skinsPerDay) + '</b><span>Winners: ' + who(day.skins) + '</span></div>' +
-      '<div class="pc"><small>Closest to the pin</small><b>' + usd(PRIZES.ctpPerDay) + '</b><span>Winners: ' + who(day.ctp) + '</span></div></div>';
-  }).join('');
+  $('mSkinsTot').textContent = usd(PRIZES.skinsPerDay * SCHEDULE.length);
+  $('mCtpTot').textContent = usd(PRIZES.ctpPerDay * SCHEDULE.length);
+  $('capB').textContent = 'Captain: ' + CONFIG.teams.blue.captain;
+  $('capG').textContent = 'Captain: ' + CONFIG.teams.green.captain;
 
   /* COUNTDOWN */
+  var last = {};
+  function setTile(id, val) {
+    var el = $(id);
+    if (last[id] === val) return;
+    last[id] = val;
+    el.textContent = val;
+    if (!reduce) { el.classList.remove('tk'); void el.offsetWidth; el.classList.add('tk'); }
+  }
   function tick() {
     var now = new Date();
     var ms = CONFIG.dayOne - now;
@@ -389,10 +509,7 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
     var d = Math.floor(s / 86400); s -= d * 86400;
     var h = Math.floor(s / 3600); s -= h * 3600;
     var m = Math.floor(s / 60); s -= m * 60;
-    $('cd').textContent = pad(d, 3);
-    $('ch').textContent = pad(h, 2);
-    $('cm').textContent = pad(m, 2);
-    $('cs').textContent = pad(s, 2);
+    setTile('cd', pad(d, 3)); setTile('ch', pad(h, 2)); setTile('cm', pad(m, 2)); setTile('cs', pad(s, 2));
     var total = CONFIG.dayOne - CONFIG.startedWaiting;
     var pct = Math.max(0, Math.min(1, (now - CONFIG.startedWaiting) / total)) * 100;
     $('barFill').style.width = pct + '%';
@@ -402,63 +519,161 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
   tick();
   setInterval(tick, 1000);
 
-  /* TEE SHEET WITH MATCHUPS */
-  function side(names) { return names.length ? names.join(' / ') : 'TBD'; }
-  function matchRow(m) {
-    var halved = m.winner === 'halved';
-    return '<div class="m">' +
-      '<span class="s b' + (m.blue.length ? '' : ' tbd') + (m.winner === 'blue' ? ' win' : '') + '">' + side(m.blue) + '</span>' +
-      '<span class="v">' + (halved ? '&frac12;' : 'vs') + '</span>' +
-      '<span class="s g' + (m.green.length ? '' : ' tbd') + (m.winner === 'green' ? ' win' : '') + '">' + side(m.green) + '</span></div>';
+  /* RENDERING */
+  function nyToday() {
+    try { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); } catch (e) { return ''; }
   }
-  var COURSE_URLS = {
-    'Talamore Golf Club': 'https://www.talamoregolfresort.com/',
-    'Mid South Club': 'https://www.talamoregolfresort.com/mid-south-club/',
-    'Mid Pines': 'https://midpinesinn.com/',
-    'Pine Needles': 'https://pineneedleslodge.com/',
-    'Tobacco Road Golf Club': 'http://www.tobaccoroadgolf.com',
-    'Southern Pines Golf Club': 'https://southernpinesgolfclub.com/',
-    'Tot Hill Farm Golf Club': 'http://www.tothillfarm.com'
-  };
-  function roundHtml(r) {
-    var set = r.matches.filter(function (m) { return m.blue.length && m.green.length; }).length;
+  function matchRow(m) {
+    var blue = m.blue || [], green = m.green || [];
+    var halved = m.winner === 'halved';
+    var st = m.status ? '<span class="st ' + (m.winner === 'blue' || (!m.winner && m.lead === 'blue') ? 'b' : (m.winner === 'green' || (!m.winner && m.lead === 'green') ? 'g' : '')) + '">' + esc(m.status) + '</span>' : '';
+    return '<div class="m">' +
+      '<span class="s b' + (blue.length ? '' : ' tbd') + (m.winner === 'blue' ? ' win' : '') + '">' + names(blue).replace(/, /g, ' / ') + '</span>' +
+      '<span class="v">' + (halved ? '&frac12;' : 'vs') + '</span>' +
+      '<span class="s g' + (green.length ? '' : ' tbd') + (m.winner === 'green' ? ' win' : '') + '">' + names(green).replace(/, /g, ' / ') + '</span>' + st + '</div>';
+  }
+  function tagFor(state) {
+    return state === 'live' ? '<span class="tag live">Live</span>' : state === 'final' ? '<span class="tag final">Final</span>' : '';
+  }
+  function roundHtml(r, open) {
+    var set = r.matches.filter(function (m) { return (m.blue || []).length && (m.green || []).length; }).length;
     var label = set ? set + ' of ' + r.matches.length + ' set' : r.matches.length + ' matches · TBD';
-    return '<div class="round"><div class="rhead"><div><h3><a class="clink" href="' + COURSE_URLS[r.course] + '" target="_blank" rel="noopener">' + r.course + '</a></h3><p>' +
-      (r.time === 'TBD' ? 'Tee time TBD' : r.time) + '</p></div><span class="fmt">' +
-      (r.format === 'TBD' ? 'Format TBD' : r.format) + '</span></div>' +
-      '<details class="mu"><summary>Matchups <span>' + label + '</span></summary><div class="ml">' +
+    return '<div class="round"><div class="rhead"><div><h3><a class="clink" href="' + esc(COURSE_URLS[r.course]) + '" target="_blank" rel="noopener">' + esc(r.course) + '</a>' + tagFor(r.state) + '</h3><p>' +
+      (r.time === 'TBD' ? 'Tee time TBD' : esc(r.time)) + '</p></div><span class="fmt">' +
+      (r.format === 'TBD' ? 'Format TBD' : esc(r.format)) + '</span></div>' +
+      '<details class="mu"' + (open ? ' open' : '') + '><summary>Matchups <span>' + label + '</span></summary><div class="ml">' +
       r.matches.map(matchRow).join('') + '</div></details></div>';
   }
-  $('sheetList').innerHTML = DAYS.map(function (day) {
-    return '<div class="day"><div class="date"><small>' + day.dow + '</small><b>' + day.d + '</b></div>' +
-      '<div class="rounds">' + day.rounds.map(roundHtml).join('') + '</div></div>';
-  }).join('');
-
-  /* CUP STANDINGS, computed from match results */
-  var pb = 0, pg = 0;
-  DAYS.forEach(function (day) {
-    day.rounds.forEach(function (r) {
+  function points(rs) {
+    var p = { b: 0, g: 0, pb: 0, pg: 0 };
+    rs.forEach(function (r) {
       r.matches.forEach(function (m) {
-        if (m.winner === 'blue') pb += 1;
-        else if (m.winner === 'green') pg += 1;
-        else if (m.winner === 'halved') { pb += 0.5; pg += 0.5; }
+        if (m.winner === 'blue') { p.b += 1; p.pb += 1; }
+        else if (m.winner === 'green') { p.g += 1; p.pg += 1; }
+        else if (m.winner === 'halved') { p.b += .5; p.g += .5; p.pb += .5; p.pg += .5; }
+        else if (m.lead === 'blue') p.pb += 1;
+        else if (m.lead === 'green') p.pg += 1;
       });
     });
-  });
-  $('ptsB').textContent = pb;
-  $('ptsG').textContent = pg;
-  $('capB').textContent = 'Captain: ' + CONFIG.teams.blue.captain;
-  $('capG').textContent = 'Captain: ' + CONFIG.teams.green.captain;
+    return p;
+  }
+  function fmtPts(n) { return n % 1 ? (Math.floor(n) || '') + '½' : String(n); }
+
+  var shown = {};
+  function countTo(el, val) {
+    var key = el.id;
+    if (shown[key] === val) return;
+    shown[key] = val;
+    if (reduce || typeof val !== 'number') { el.textContent = fmtPts(val); return; }
+    var t0 = performance.now(), dur = 900;
+    (function step(t) {
+      var k = Math.min(1, (t - t0) / dur);
+      var v = Math.round(val * 2 * (1 - Math.pow(1 - k, 3))) / 2;
+      el.textContent = fmtPts(v);
+      if (k < 1) requestAnimationFrame(step); else el.textContent = fmtPts(val);
+    })(t0);
+  }
+
+  function render() {
+    var rs = rounds();
+    var today = nyToday();
+    var anyLive = rs.some(function (r) { return r.state === 'live'; });
+    document.body.classList.toggle('has-live', anyLive);
+
+    /* Tee sheet */
+    $('sheetList').innerHTML = SCHEDULE.map(function (day, di) {
+      var isToday = today === '2027-06-' + pad(day.d, 2);
+      return '<div class="day' + (isToday ? ' today' : '') + '"><div class="date"><small>' + day.dow + (isToday ? ' · TODAY' : '') + '</small><b>' + day.d + '</b></div>' +
+        '<div class="rounds">' + rs.filter(function (r) { return r.di === di; }).map(function (r) { return roundHtml(r, r.state === 'live'); }).join('') + '</div></div>';
+    }).join('');
+
+    /* Prize board */
+    $('prizeBoard').innerHTML = SCHEDULE.map(function (day, di) {
+      var dd = (DATA.days && DATA.days[di]) || {};
+      return '<div class="pr"><div class="date"><small>' + day.dow + '</small><b>' + day.d + '</b></div>' +
+        '<div class="pc"><small>Skins</small><b>' + usd(PRIZES.skinsPerDay) + '</b><span>Winners: ' + names(dd.skins) + '</span></div>' +
+        '<div class="pc"><small>Closest to the pin</small><b>' + usd(PRIZES.ctpPerDay) + '</b><span>Winners: ' + names(dd.ctp) + '</span></div></div>';
+    }).join('');
+    $('mvpName').textContent = DATA.mvp || 'TBD';
+
+    /* Cup */
+    var p = points(rs);
+    countTo($('ptsB'), p.b); countTo($('ptsG'), p.g);
+    countTo($('lvB'), p.b); countTo($('lvG'), p.g);
+    var proj = (p.pb !== p.b || p.pg !== p.g);
+    $('lvMid').innerHTML = proj ? 'Cup standings<br>If it ended now<br><b style="color:var(--chalk)">' + fmtPts(p.pb) + ' &ndash; ' + fmtPts(p.pg) + '</b>' : 'Cup standings';
+
+    /* Live view */
+    var live = rs.filter(function (r) { return r.state === 'live'; });
+    var done = rs.filter(function (r) { return r.state === 'final'; });
+    var html = '';
+    if (!live.length && !done.length) {
+      var started = new Date() >= CONFIG.dayOne;
+      html = '<div class="panel lv-empty"><p class="label">' + (started ? 'Scoring starts with the first match' : 'Scoring goes live on the first tee') + '</p>' +
+        '<p class="teed">' + (started ? 'Waiting on the first result' : 'Tue June 15, 8:00 AM') + '</p>' +
+        '<p class="blurb">' + (started ? 'This page updates on its own as matches are posted.' : 'Talamore Golf Club. Come back here once the trip is under way. Live matches, running cup points and final results show up on this page by themselves.') + '</p></div>';
+    } else {
+      live.concat(done).forEach(function (r) {
+        html += '<div class="panel lv-round"><h3>' + esc(r.course) + tagFor(r.state) + '</h3><p class="lv-sub">' + esc(r.day.dow) + ' ' + r.day.d + ' · ' + (r.format === 'TBD' ? 'Format TBD' : esc(r.format)) + '</p><div class="ml">' + r.matches.map(matchRow).join('') + '</div></div>';
+      });
+    }
+    $('lvBody').innerHTML = html;
+    var u = DATA.updated ? new Date(DATA.updated) : null;
+    $('lvUpd').textContent = u && !isNaN(u) ? 'Last update ' + u.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET. Refreshes on its own.' : 'Refreshes on its own once the trip starts.';
+    observe();
+  }
+
+  /* LIVE REFRESH: re-read the data block from the published page. */
+  var lastRaw = $('trip-data').textContent;
+  function refresh() {
+    if (document.hidden || location.protocol === 'file:') return;
+    fetch(location.pathname + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : Promise.reject(); })
+      .then(function (txt) {
+        var doc = new DOMParser().parseFromString(txt, 'text/html');
+        var node = doc.getElementById('trip-data');
+        if (!node || node.textContent === lastRaw) return;
+        var d = readData(node);
+        if (!d) return;
+        lastRaw = node.textContent; DATA = d; render();
+      }).catch(function () {});
+  }
+  setInterval(refresh, 45000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(); });
 
   /* ROSTERS */
   function teamHtml(t) {
-    var rows = '<li class="cap"><span>' + t.captain + '</span><span class="badge">Captain</span></li>';
-    t.players.forEach(function (p) { rows += '<li><span>' + p + '</span></li>'; });
+    var rows = '<li class="cap"><span>' + esc(t.captain) + '</span><span class="badge">Captain</span></li>';
+    t.players.forEach(function (pl) { rows += '<li><span>' + esc(pl) + '</span></li>'; });
     for (var i = 1 + t.players.length; i < CONFIG.teamSize; i++) rows += '<li class="tba"><span>TBD</span></li>';
-    return '<div class="team ' + t.cls + '"><header><h3>' + t.name + '</h3><span>' + (1 + t.players.length) +
+    return '<div class="team ' + t.cls + ' rv"><header><h3>' + t.name + '</h3><span>' + (1 + t.players.length) +
       ' of ' + CONFIG.teamSize + ' set</span></header><ul>' + rows + '</ul></div>';
   }
   $('rosterGrid').innerHTML = teamHtml(CONFIG.teams.blue) + teamHtml(CONFIG.teams.green);
+
+  /* SCROLL REVEAL */
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: .08, rootMargin: '0px 0px -6% 0px' }) : null;
+  function observe() {
+    document.querySelectorAll('.rv:not(.in)').forEach(function (el, i) {
+      if (!io) { el.classList.add('in'); return; }
+      el.style.setProperty('--d', (i % 3) * .07 + 's');
+      io.observe(el);
+    });
+  }
+
+  /* SHARE */
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove('on'); }, 2200);
+  }
+  $('shareBtn').addEventListener('click', function () {
+    var url = /^https?:/.test(location.protocol) ? location.href.split('#')[0] : CONFIG.shareUrl;
+    if (navigator.share) { navigator.share({ title: 'Boys Golf Trip 2027', text: 'Blue vs Green. June 15 to 18.', url: url }).catch(function () {}); return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast('Link copied'); }, function () { toast(url); });
+    else toast(url);
+  });
 
   /* CONTOURS: a drifting green with a pin. Every fifth ring is an index contour. */
   var cv = $('contours');
@@ -481,7 +696,7 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
     if (!w || !h) return;
     ctx.clearRect(0, 0, w, h);
     var cx = w * (w < 700 ? 0.8 : 0.78);
-    var cy = h * 0.4;
+    var cy = h * (w < 700 ? 0.66 : 0.4);
     var maxR = Math.hypot(Math.max(cx, w - cx), Math.max(cy, h - cy)) * 1.05;
     var rings = 24;
     for (var i = 1; i <= rings; i++) {
@@ -529,17 +744,22 @@ footer .mono { font-family: var(--mono); color: var(--muted); font-size: 12px; m
     requestAnimationFrame(loop);
   }
 
-  /* VIEWS: Trip and Rosters */
+  /* VIEWS: Trip, Live and Rosters */
+  var VIEWS = { trip: 'viewTrip', live: 'viewLive', rosters: 'viewRosters' };
   function route() {
-    var rosters = location.hash === '#rosters';
-    $('viewTrip').hidden = rosters;
-    $('viewRosters').hidden = !rosters;
-    $('navTrip').setAttribute('aria-current', rosters ? 'false' : 'page');
-    $('navRosters').setAttribute('aria-current', rosters ? 'page' : 'false');
-    if (!rosters) size();
+    var v = location.hash.slice(1);
+    if (!VIEWS[v]) v = 'trip';
+    Object.keys(VIEWS).forEach(function (k) {
+      $(VIEWS[k]).hidden = k !== v;
+      var a = $('nav' + k.charAt(0).toUpperCase() + k.slice(1));
+      a.setAttribute('aria-current', k === v ? 'page' : 'false');
+    });
+    if (v === 'trip') size();
+    observe();
   }
   window.addEventListener('hashchange', function () { route(); window.scrollTo(0, 0); });
   window.addEventListener('resize', size);
+  render();
   route();
   if (!reduce) requestAnimationFrame(loop);
 })();

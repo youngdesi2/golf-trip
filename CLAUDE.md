@@ -14,9 +14,12 @@ Single-file static website (`index.html`, no build step) for a 20-man Ryder Cup 
 - Prize pool: team match pot $5,000 (each man on the winning team collects $500), skins $600 a day, closest to the pin $400 a day. Trip MVP award, winner TBD.
 
 ## How the page is built
-- All content is data in the script at the bottom of `index.html`: `CONFIG` (dates, teams, captains), `DAYS` (rounds, tee times, matches, skins and ctp winners), `PRIZES`, `MVP`, `COURSE_URLS`. Update those and the page re-renders. Cup points are computed from match `winner` values (`'blue'`, `'green'`, `'halved'`).
-- Two views, Trip and Rosters, switched by `#trip` and `#rosters` in the URL hash.
-- The hero has a canvas of drifting topographic contour lines with a pin flag. It respects reduced motion.
+- Fixed facts live in the script at the bottom of `index.html`: `CONFIG` (dates, teams, captains, share URL), `SCHEDULE` (days, courses, tee times), `PRIZES`, `COURSE_URLS`.
+- Everything that changes during the trip lives in one JSON block, `<script type="application/json" id="trip-data">`: per round `format`, `state` (upcoming/live/final) and `matches` (player names, `winner`, `lead`, `status`), per day `skins` and `ctp` winners, plus `mvp` and `updated`. Cup points are computed from match `winner` values. The comment above the block explains each field.
+- Live scoring: every open page re-reads `trip-data` from its own published URL every 45 seconds (and when the tab regains focus) and re-renders. To post a score, edit that block on GitHub (works from a phone), commit, and open pages update after Pages redeploys (about a minute).
+- Three views switched by URL hash: `#trip`, `#live`, `#rosters`.
+- Hero has a canvas of drifting topographic contour lines with a pin flag. Respects reduced motion. Sections fade in on scroll, countdown digits tick, cup points count up.
+- Share preview: `og.png` (1200x630) plus Open Graph and Twitter tags pointing at `https://youngdesi2.github.io/golf-trip/`. If the repo or Pages URL changes, update the absolute URLs in the head and `CONFIG.shareUrl`.
 - Fonts: Big Shoulders Display, Instrument Sans, DM Mono from Google Fonts. Single committed dark green look.
 
 ## Decisions and constraints
@@ -24,7 +27,7 @@ Single-file static website (`index.html`, no build step) for a 20-man Ryder Cup 
 - The bet breakdown the owner gave does not yet add up to the total he stated. Ask before showing any grand total.
 - The owner disliked small illustrated course thumbnails. Do not add them back. Real photos are fine if he supplies them.
 - Course names link to each course's official site (opens in a new tab).
-- Keep it one file with no build step unless the owner asks otherwise.
+- Keep it one HTML file with no build step unless the owner asks otherwise. `og.png` is the only other asset, needed because link previews require an image file.
 - Phone first. Most of the group will open the link from a text message.
 
 ## Open items
@@ -32,4 +35,4 @@ Single-file static website (`index.html`, no build step) for a 20-man Ryder Cup 
 - Formats and matchups for each round
 - The remaining part of the bet total
 - MVP criteria or prize
-- Ideas to make it more impressive, for example a share preview image, scoring during the trip, per-round results
+- Optional extras: add to calendar, real course photos (only if supplied), per-hole scoring
