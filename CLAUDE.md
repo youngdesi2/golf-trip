@@ -14,11 +14,16 @@ Single-file static website (`index.html`, no build step) for a 20-man Ryder Cup 
 - Prize pool: team match pot $5,000 (each man on the winning team collects $500), skins $600 a day, closest to the pin $400 a day. Trip MVP award, winner TBD.
 
 ## How the page is built
-- Fixed facts live in the script at the bottom of `index.html`: `CONFIG` (dates, teams, captains, share URL), `SCHEDULE` (days, courses, tee times), `PRIZES`, `COURSE_URLS`.
-- Everything that changes during the trip lives in one JSON block, `<script type="application/json" id="trip-data">`: per round `format`, `state` (upcoming/live/final) and `matches` (player names, `winner`, `lead`, `status`), per day `skins` and `ctp` winners, plus `mvp` and `updated`. Cup points are computed from match `winner` values. The comment above the block explains each field.
-- Live scoring: every open page re-reads `trip-data` from its own published URL every 45 seconds (and when the tab regains focus) and re-renders. To post a score, edit that block on GitHub (works from a phone), commit, and open pages update after Pages redeploys (about a minute).
-- Three views switched by URL hash: `#trip`, `#live`, `#rosters`.
-- Hero has a canvas of drifting topographic contour lines with a pin flag. Respects reduced motion. Sections fade in on scroll, countdown digits tick, cup points count up.
+- Principle: enter data once. Everything that can change lives in ONE JSON block, `<script type="application/json" id="trip-data">`, with a comment above it explaining each field: `players` (name, team, captain, nick), `days` (skins and ctp winner names, plus `rounds` with course, url, start time, format, state, `revealed`, and `matches`), `mvp` (winner and point values), `updated`. Players are referenced by name everywhere, so spell names the same each time (the Live page warns about unknown names).
+- Everything else is derived from that block: rosters and open spots, matchups, cup points and the tug-of-war bar, MVP leaderboard, skins/CTP per day, the pairings reveal, and the `.ics` calendar file. Fixed facts (dates, prize amounts, share URL, calendar event length) stay in `CONFIG` and `PRIZES` in the script below it.
+- Views by URL hash, switched from a bottom dock: `#trip`, `#live`, `#pairings`, `#mvp`, `#rosters`.
+- Cup bar: blue vs green tug-of-war, knot position = point difference over points needed to clinch (more than half of all matches). A dashed ghost knot shows "if it ended now" from live `lead` values. Confetti when a team clinches (once per session).
+- Pairings reveal: `round.revealed` = how many matches are public (0 hides all, null shows all). Bump the number during the reveal; open pages animate the newly revealed cards and show a toast. "Replay the reveal" re-runs it for anyone.
+- MVP race: points per player = match wins, halves, skins, closest to the pin, using the values in `mvp.points`. These defaults (win 1, halve 0.5, skin 1, ctp 1) are a placeholder the owner has not confirmed; the MVP prize and criteria are still TBD.
+- Calendar: "Add to calendar" builds an `.ics` in the browser (7 events, one per round, with a stable UID so re-importing updates them). Start times are Eastern (EDT, UTC-4); each event is `CONFIG.calHours` long (5) because the schedule only has tee times.
+- Live refresh: every open page re-reads `trip-data` from its own URL every 45 seconds and when the tab regains focus. Editing the block on GitHub and committing updates everyone after Pages redeploys (about a minute).
+- Demo: add `?demo` to the URL (`https://youngdesi2.github.io/golf-trip/?demo`) to preview every feature with fake players and scores. Demo data is generated in `makeDemo()` and never touches the real data.
+- Motion: hero contour lines and waving pin, staggered hero entrance, scroll reveals, ticking countdown digits, count-up scores, sliding dock indicator, view transitions. All respect reduced motion.
 - Share preview: `og.png` (1200x630) plus Open Graph and Twitter tags pointing at `https://youngdesi2.github.io/golf-trip/`. If the repo or Pages URL changes, update the absolute URLs in the head and `CONFIG.shareUrl`.
 - Fonts: Big Shoulders Display, Instrument Sans, DM Mono from Google Fonts. Single committed dark green look.
 
@@ -35,4 +40,5 @@ Single-file static website (`index.html`, no build step) for a 20-man Ryder Cup 
 - Formats and matchups for each round
 - The remaining part of the bet total
 - MVP criteria or prize
-- Optional extras: add to calendar, real course photos (only if supplied), per-hole scoring
+- Confirm the MVP point values (currently a placeholder)
+- Optional extras: real course photos (only if supplied), per-hole scoring
