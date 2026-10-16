@@ -334,6 +334,35 @@ h2::after { transform-origin: left; }
   .view-in, .pc2.open .pc2-body .s, .pc2.open .pc2-body .v, .rk .bar2 u, .tug-fill, .tug-knot::after, .pc2-cover, .tg b.bump { animation: none !important; }
   .tug-fill, .tug-knot, .tug-ghost, .pc2-cover { transition: none; }
 }
+
+/* V4: collapsibles, two-player sides */
+.coll-h { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.chev { flex: none; width: 9px; height: 9px; margin: 0 4px 3px 4px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .45s cubic-bezier(.34,1.4,.5,1), border-color .3s; }
+.coll.open > .coll-h .chev { transform: rotate(-135deg) translate(-2px, -2px); border-color: var(--chalk); }
+.coll-b { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .6s cubic-bezier(.2,.8,.2,1), visibility 0s .6s; }
+.coll.open > .coll-b { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .6s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+.coll-in { min-height: 0; overflow: hidden; }
+.coll-b .m, .coll-b li { opacity: 0; transform: translateY(14px) scale(.985); transition: opacity .2s, transform .2s; }
+.coll.open > .coll-b .m, .coll.open > .coll-b li { opacity: 1; transform: none; transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1); transition-delay: calc(.1s + var(--i, 0) * .07s); }
+.coll.mu { margin-top: 10px; }
+.coll.mu > .coll-h { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 2px; background: rgba(255,255,255,.03); transition: background .3s, border-color .3s; }
+.coll.mu.open > .coll-h { background: rgba(255,255,255,.07); border-color: rgba(141,184,163,.45); }
+.coll.mu .cnt { margin-left: auto; color: var(--muted); }
+.coll.mu .ml { padding-top: 6px; }
+.team.coll { padding: 0; }
+.team-h { padding: 18px 20px; align-items: baseline; }
+.team-h h3 { flex: 1; min-width: 0; }
+.team-h span { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.team-h .chev { align-self: center; }
+.team.coll ul { padding: 0 20px 12px; }
+.m .s .pl { display: block; line-height: 1.35; }
+.m .s .pl + .pl { margin-top: 2px; }
+.m .s .pl.tbd { opacity: .5; font-weight: 500; }
+.pc2-body .s .pl { display: block; line-height: 1.4; }
+.pc2-body .s .pl.tbd { opacity: .5; font-weight: 500; }
+@media (prefers-reduced-motion: reduce) {
+  .coll-b, .coll.open > .coll-b, .coll-b .m, .coll-b li, .chev { transition: none !important; }
+}
 </style>
 <meta property="og:title" content="Boys Golf Trip 2027: Blue vs Green">
 <meta property="og:site_name" content="Boys Golf Trip 2027">
@@ -411,6 +440,12 @@ h2::after { transform-origin: left; }
     </section>
 
     <section class="inner rv">
+      <h2>Tee Sheet</h2>
+      <div class="sheet" id="sheetList"></div>
+      <p style="margin-top:16px"><button class="btn ghost" id="calBtn2" type="button">Add tee times to calendar</button> <a class="btn ghost" href="#pairings">Pairings</a></p>
+    </section>
+
+    <section class="inner rv">
       <h2>The Trip</h2>
       <div class="grid2">
         <div class="panel">
@@ -428,12 +463,6 @@ h2::after { transform-origin: left; }
           </dl>
         </div>
       </div>
-    </section>
-
-    <section class="inner rv">
-      <h2>Tee Sheet</h2>
-      <div class="sheet" id="sheetList"></div>
-      <p style="margin-top:16px"><button class="btn ghost" id="calBtn2" type="button">Add tee times to calendar</button> <a class="btn ghost" href="#pairings">Pairings</a></p>
     </section>
 
     <section class="inner rv">
@@ -714,6 +743,11 @@ h2::after { transform-origin: left; }
     if (p && p.nick) { var parts = n.split(' '); return parts[0] + ' “' + p.nick + '” ' + parts.slice(1).join(' '); }
     return n;
   }
+  function sideHtml(list) {
+    var out = '', n = Math.max(2, (list || []).length), i, x;
+    for (i = 0; i < n; i++) { x = (list || [])[i]; out += '<span class="pl' + (x ? '' : ' tbd') + '">' + (x ? esc(dispName(x)) : 'TBD') + '</span>'; }
+    return out;
+  }
   function joinNames(list) { return list && list.length ? list.map(function (n) { return esc(dispName(n)); }).join(' / ') : 'TBD'; }
   function listNames(list) { return list && list.length ? list.map(function (n) { return esc(dispName(n)); }).join(', ') : 'TBD'; }
   function fmtTime(s) {
@@ -865,23 +899,30 @@ h2::after { transform-origin: left; }
   /* ---------- MATCH ROWS, TEE SHEET ---------- */
   function tagFor(state) { return state === 'live' ? '<span class="tag live">Live</span>' : state === 'final' ? '<span class="tag final">Final</span>' : ''; }
   function statusCls(m) { return m.winner === 'blue' || (!m.winner && m.lead === 'blue') ? 'b' : (m.winner === 'green' || (!m.winner && m.lead === 'green') ? 'g' : ''); }
-  function matchRow(m, shown) {
-    if (!shown) return '<div class="m"><span class="s b tbd">Hidden</span><span class="v">vs</span><span class="s g tbd">Hidden</span><span class="st">Revealed on the Pairings page</span></div>';
-    return '<div class="m"><span class="s b' + ((m.blue || []).length ? '' : ' tbd') + (m.winner === 'blue' ? ' win' : '') + '">' + joinNames(m.blue) + '</span>' +
+  function matchRow(m, shown, i) {
+    var st = ' style="--i:' + Math.min(i || 0, 8) + '"';
+    if (!shown) return '<div class="m"' + st + '><span class="s b">' + sideHtml([]).replace(/TBD/g, 'Hidden') + '</span><span class="v">vs</span><span class="s g">' + sideHtml([]).replace(/TBD/g, 'Hidden') + '</span><span class="st">Revealed on the Pairings page</span></div>';
+    return '<div class="m"' + st + '><span class="s b' + (m.winner === 'blue' ? ' win' : '') + '">' + sideHtml(m.blue) + '</span>' +
       '<span class="v">' + (m.winner === 'halved' ? '&frac12;' : 'vs') + '</span>' +
-      '<span class="s g' + ((m.green || []).length ? '' : ' tbd') + (m.winner === 'green' ? ' win' : '') + '">' + joinNames(m.green) + '</span>' +
+      '<span class="s g' + (m.winner === 'green' ? ' win' : '') + '">' + sideHtml(m.green) + '</span>' +
       (m.status ? '<span class="st ' + statusCls(m) + '">' + esc(m.status) + '</span>' : '') + '</div>';
   }
   var openKeys = {};
-  document.addEventListener('toggle', function (e) { var k = e.target && e.target.getAttribute && e.target.getAttribute('data-k'); if (k) openKeys[k] = e.target.open; }, true);
+  function isOpen(k, def) { return openKeys[k] != null ? openKeys[k] : def; }
+  document.addEventListener('click', function (e) {
+    var h = e.target.closest && e.target.closest('.coll-h'); if (!h) return;
+    var c = h.parentNode, on = !c.classList.contains('open');
+    c.classList.toggle('open', on); h.setAttribute('aria-expanded', on);
+    var k = c.getAttribute('data-k'); if (k) openKeys[k] = on;
+  });
   function roundHtml(r) {
     var set = r.matches.filter(hasSides).length;
     var label = set ? set + ' of ' + r.matches.length + ' set' : r.matches.length + ' matches · TBD';
-    var open = openKeys[r.key] != null ? openKeys[r.key] : r.state === 'live';
+    var open = isOpen(r.key, r.state === 'live');
     return '<div class="round"><div class="rhead"><div><h3><a class="clink" href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.course) + '</a>' + tagFor(r.state) + '</h3><p>' + esc(timeOf(r)) + '</p></div><span class="fmt">' +
       (r.format === 'TBD' ? 'Format TBD' : esc(r.format)) + '</span></div>' +
-      '<details class="mu" data-k="' + r.key + '"' + (open ? ' open' : '') + '><summary>Matchups <span>' + label + '</span></summary><div class="ml">' +
-      r.matches.map(function (m, i) { return matchRow(m, i < r.revealed); }).join('') + '</div></details></div>';
+      '<div class="coll mu' + (open ? ' open' : '') + '" data-k="' + r.key + '"><button type="button" class="coll-h" aria-expanded="' + open + '"><span>Matchups</span><span class="cnt">' + label + '</span><i class="chev"></i></button>' +
+      '<div class="coll-b"><div class="coll-in"><div class="ml">' + r.matches.map(function (m, i) { return matchRow(m, i < r.revealed, i); }).join('') + '</div></div></div></div></div>';
   }
   function nyToday() { try { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); } catch (e) { return ''; } }
   function renderSheet() {
@@ -906,7 +947,7 @@ h2::after { transform-origin: left; }
     } else {
       live.concat(done).forEach(function (r) {
         html += '<div class="panel lv-round"><h3>' + esc(r.course) + tagFor(r.state) + '</h3><p class="lv-sub">' + r.dow + ' ' + r.d + ' · ' + (r.format === 'TBD' ? 'Format TBD' : esc(r.format)) +
-          '</p><div class="ml">' + r.matches.map(function (m, i) { return matchRow(m, i < r.revealed); }).join('') + '</div></div>';
+          '</p><div class="ml">' + r.matches.map(function (m, i) { return matchRow(m, i < r.revealed, i); }).join('') + '</div></div>';
       });
     }
     $('lvBody').innerHTML = html;
@@ -955,9 +996,9 @@ h2::after { transform-origin: left; }
   function pCard(m, i, r) {
     var isOpen = i < r.revealed, blank = !hasSides(m);
     return '<div class="pc2' + ((isOpen || blank) ? ' open still' : '') + '" data-i="' + i + '"><div class="pc2-n">Match ' + (i + 1) + '</div><div class="pc2-body">' +
-      '<span class="s b' + ((m.blue || []).length ? '' : ' tbd') + (m.winner === 'blue' ? ' win' : '') + '">' + joinNames(m.blue) + '</span>' +
+      '<span class="s b' + (m.winner === 'blue' ? ' win' : '') + '">' + sideHtml(m.blue) + '</span>' +
       '<span class="v">' + (m.winner === 'halved' ? '&frac12;' : 'VS') + '</span>' +
-      '<span class="s g' + ((m.green || []).length ? '' : ' tbd') + (m.winner === 'green' ? ' win' : '') + '">' + joinNames(m.green) + '</span></div>' +
+      '<span class="s g' + (m.winner === 'green' ? ' win' : '') + '">' + sideHtml(m.green) + '</span></div>' +
       (m.status ? '<div class="pc2-st">' + esc(m.status) + '</div>' : '') +
       (blank ? '' : '<div class="pc2-cover"><b>?</b><small>Match ' + (i + 1) + ' · not revealed yet</small></div>') + '</div>';
   }
@@ -1000,22 +1041,28 @@ h2::after { transform-origin: left; }
   $('pReplay').addEventListener('click', replayReveal);
 
   /* ---------- TEAMS ---------- */
+  function collCard(k, cls, title, count, rows) {
+    var open = isOpen(k, true);
+    return '<div class="team coll ' + cls + (open ? ' open' : '') + ' rv" data-k="' + k + '"><button type="button" class="coll-h team-h" aria-expanded="' + open + '"><h3>' + title + '</h3><span>' + count + '</span><i class="chev"></i></button>' +
+      '<div class="coll-b"><div class="coll-in"><ul>' + rows + '</ul></div></div></div>';
+  }
+  function li(cls, inner, i) { return '<li' + (cls ? ' class="' + cls + '"' : '') + ' style="--i:' + Math.min(i, 9) + '">' + inner + '</li>'; }
   function teamBoard(key) {
-    var t = CONFIG.teams[key], ps = M.players.filter(function (p) { return p.team === key; });
+    var t = CONFIG.teams[key], ps = M.players.filter(function (p) { return p.team === key; }), i, rows = '';
     ps.sort(function (a, b) { return (b.captain ? 1 : 0) - (a.captain ? 1 : 0); });
-    var rows = ps.map(function (p) { return '<li' + (p.captain ? ' class="cap"' : '') + '><span>' + esc(dispName(p.name)) + '</span>' + (p.captain ? '<span class="badge">Captain</span>' : '') + '</li>'; }).join('');
-    for (var i = ps.length; i < CONFIG.teamSize; i++) rows += '<li class="tba"><span>TBD</span></li>';
-    return '<div class="team ' + t.cls + ' rv"><header><h3>' + t.name + '</h3><span>' + ps.length + ' of ' + CONFIG.teamSize + ' set</span></header><ul>' + rows + '</ul></div>';
+    ps.forEach(function (p, k) { rows += li(p.captain ? 'cap' : '', '<span>' + esc(dispName(p.name)) + '</span>' + (p.captain ? '<span class="badge">Captain</span>' : ''), k); });
+    for (i = ps.length; i < CONFIG.teamSize; i++) rows += li('tba', '<span>TBD</span>', i);
+    return collCard('t-' + key, t.cls, t.name, ps.length + ' of ' + CONFIG.teamSize + ' set', rows);
   }
   function renderTeams() {
-    var n = M.players.length, open = Math.max(0, CONFIG.totalPlayers - n), un = M.players.filter(function (p) { return !p.team; }).length;
-    $('rosterNote').textContent = n + ' of ' + CONFIG.totalPlayers + ' players are in.' + (un ? ' Teams get drafted once the field is full.' : '');
-    var rows = M.players.map(function (p) {
+    var n = M.players.length, open = Math.max(0, CONFIG.totalPlayers - n), un = M.players.filter(function (p) { return !p.team; }).length, rows = '', i;
+    $('rosterNote').textContent = n + ' of ' + CONFIG.totalPlayers + ' players are in.' + (un ? ' Teams get drafted once the field is full.' : '') + ' Tap a card to fold it.';
+    M.players.forEach(function (p, k) {
       var tag = p.captain ? '<span class="badge">' + (p.team === 'blue' ? 'Blue' : 'Green') + ' captain</span>' : p.team ? '<span class="badge">' + CONFIG.teams[p.team].name + '</span>' : '<span class="tbdtag">Team TBD</span>';
-      return '<li' + (p.team ? ' class="' + (p.team === 'blue' ? 'b' : 'g') + (p.captain ? ' cap' : '') + '"' : '') + '><span>' + esc(dispName(p.name)) + '</span>' + tag + '</li>';
-    }).join('');
-    for (var i = 0; i < open; i++) rows += '<li class="tba"><span>Open spot</span></li>';
-    $('poolBox').innerHTML = '<div class="team pool rv"><header><h3>Players in</h3><span>' + n + ' of ' + CONFIG.totalPlayers + ' confirmed</span></header><ul>' + rows + '</ul></div>';
+      rows += li((p.team ? (p.team === 'blue' ? 'b' : 'g') : '') + (p.captain ? ' cap' : ''), '<span>' + esc(dispName(p.name)) + '</span>' + tag, k);
+    });
+    for (i = 0; i < open; i++) rows += li('tba', '<span>Open spot</span>', n + i);
+    $('poolBox').innerHTML = collCard('t-pool', 'pool', 'Players in', n + ' of ' + CONFIG.totalPlayers + ' confirmed', rows);
     $('rosterGrid').innerHTML = teamBoard('blue') + teamBoard('green');
   }
 
